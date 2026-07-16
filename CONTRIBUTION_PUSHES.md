@@ -72,3 +72,17 @@ git add frontend/src/pages/AdminDashboard.tsx
 git commit -m "feat(frontend): implement admin widgets, playlist song reordering, profiles and liked songs views"
 git push origin main
 ```
+
+---
+
+### 📅 Day 8: Synchronized Lyrics Display & Interactive Seek
+**Files**: Central player state expansion, lyrics lookup service, animated overlay UI with dynamic genre gradients, and control dock integration.
+```bash
+git add frontend/src/services/lyricsData.ts
+git add frontend/src/components/LyricsOverlay.tsx
+git add frontend/src/context/PlayerContext.tsx
+git add frontend/src/components/Player.tsx
+git add frontend/src/layouts/MainLayout.tsx
+git commit -m "feat(frontend): implement synchronized interactive scrolling lyrics display with dynamic background gradients"
+git push origin main
+```

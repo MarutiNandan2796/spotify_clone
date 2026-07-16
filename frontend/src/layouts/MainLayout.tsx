@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import Player from '../components/Player';
+import LyricsOverlay from '../components/LyricsOverlay';
 
 const MainLayout: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const MainLayout: React.FC = () => {
           <Navbar />
           <div className="flex-1 overflow-y-auto overflow-x-hidden relative spotify-gradient-bg">
             <Outlet />
+            <LyricsOverlay />
           </div>
         </div>
       </div>

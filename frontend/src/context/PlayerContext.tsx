@@ -13,6 +13,7 @@ interface PlayerContextType {
   repeatMode: 'off' | 'all' | 'one';
   queue: Song[];
   history: Song[];
+  showLyrics: boolean;
   playSong: (song: Song, newQueue?: Song[]) => void;
   pauseSong: () => void;
   resumeSong: () => void;
@@ -28,6 +29,7 @@ interface PlayerContextType {
   removeFromQueue: (songId: string) => void;
   clearQueue: () => void;
   setQueueList: (songs: Song[]) => void;
+  toggleLyrics: () => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -49,6 +51,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [queue, setQueue] = useState<Song[]>([]);
   const [originalQueue, setOriginalQueue] = useState<Song[]>([]); // To preserve original sequence when shuffle is toggled
   const [history, setHistory] = useState<Song[]>([]);
+  const [showLyrics, setShowLyrics] = useState(false);
 
   // Initialize Audio
   useEffect(() => {
@@ -208,6 +211,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   };
 
+  const toggleLyrics = () => {
+    setShowLyrics((prev) => !prev);
+  };
+
   const playNext = () => {
     if (queue.length === 0 || !currentSong) return;
 
@@ -315,6 +322,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         repeatMode,
         queue,
         history,
+        showLyrics,
         playSong,
         pauseSong,
         resumeSong,
@@ -330,6 +338,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         removeFromQueue,
         clearQueue,
         setQueueList,
+        toggleLyrics,
       }}
     >
       {children}

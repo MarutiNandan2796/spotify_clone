@@ -12,7 +12,8 @@ import {
   RiHeartLine,
   RiHeartFill,
   RiVolumeMuteLine,
-  RiVolumeUpLine
+  RiVolumeUpLine,
+  RiMicLine
 } from 'react-icons/ri';
 import { MdQueueMusic } from 'react-icons/md';
 
@@ -39,6 +40,8 @@ const Player: React.FC = () => {
     toggleMute,
     toggleShuffle,
     toggleRepeat,
+    showLyrics,
+    toggleLyrics,
   } = usePlayer();
 
   const [isLiked, setIsLiked] = useState(false);
@@ -183,6 +186,17 @@ const Player: React.FC = () => {
 
       {/* RIGHT: Volume & Queue */}
       <div className="flex items-center gap-3 w-1/3 justify-end relative">
+        {/* Toggle Lyrics button */}
+        <button
+          onClick={toggleLyrics}
+          className={`hover:text-white transition-colors relative cursor-pointer ${
+            showLyrics ? 'text-spotify-green' : 'text-spotify-lightGray'
+          }`}
+          title="Lyrics"
+        >
+          <RiMicLine className="w-5 h-5" />
+        </button>
+
         {/* Toggle Queue Drawer button */}
         <button
           onClick={() => setShowQueue(!showQueue)}
