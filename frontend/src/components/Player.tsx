@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -60,6 +60,49 @@ const Player: React.FC = () => {
     };
     checkLike();
   }, [currentSong, user]);
+
+  const currentTimeRef = useRef(currentTime);
+  currentTimeRef.current = currentTime;
+  const durationRef = useRef(duration);
+  durationRef.current = duration;
+
+  // Global keyboard shortcuts for music playback controls
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore shortcuts if the user is typing in inputs or textarea elements
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          togglePlay();
+          break;
+        case 'KeyM':
+          e.preventDefault();
+          toggleMute();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          seek(Math.min(durationRef.current, currentTimeRef.current + 5));
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          seek(Math.max(0, currentTimeRef.current - 5));
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [togglePlay, toggleMute, seek]);
+
 
   const handleLikeToggle = async () => {
     if (!user || !currentSong) return;
