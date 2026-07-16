@@ -1,7 +1,4 @@
-export interface LyricLine {
-  time: number;
-  text: string;
-}
+import type { LyricLine } from '../types';
 
 const lyricsMap: Record<string, LyricLine[]> = {
   'summer breeze lullaby': [

@@ -57,3 +57,9 @@ export interface Playlist {
   isPublic: boolean;
   createdAt: string;
 }
+
+export interface LyricLine {
+  time: number;
+  text: string;
+}
+
