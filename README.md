@@ -26,6 +26,14 @@ A production-quality music streaming web application styled with glassmorphism a
 
 ---
 
+## ⭐ Key Features
+
+- **Interactive Synchronized Lyrics**: Real-time karaoke-style lyrics display that automatically scrolls and highlights the active line based on playback time, with dynamic background gradients matching the song genre and click-to-seek support.
+- **Keyboard Shortcuts Navigation**: Use global keyboard controls (`Space` to play/pause, `M` to mute/unmute, `Right/Left arrows` to skip forward/backward 5s) for instant playback adjustment.
+- **Tailwind Glassmorphic UI/UX**: Exquisite design detailing with hover effects, card expansions, and sleek page transitions built using Framer Motion.
+
+---
+
 ## 📂 Project Directory Structure
 
 ```
