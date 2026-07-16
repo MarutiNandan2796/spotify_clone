@@ -115,6 +115,15 @@ const lyricsMap: Record<string, LyricLine[]> = {
   ]
 };
 
+/**
+ * Retrieves the synchronized lyrics array for a given song title and artist.
+ * If the song exists in the local seeded dictionary, returns the curated timestamps and text.
+ * Otherwise, procedurally generates a fitting default sequence of lyrics lines.
+ * 
+ * @param title The title of the song to search for.
+ * @param artist The artist of the song.
+ * @returns An array of objects containing the timestamp (in seconds) and text content of each line.
+ */
 export const getLyricsForSong = (title: string, artist: string): LyricLine[] => {
   const cleanTitle = title.toLowerCase().trim();
   if (lyricsMap[cleanTitle]) {
