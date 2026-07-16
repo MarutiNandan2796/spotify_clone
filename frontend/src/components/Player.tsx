@@ -13,6 +13,7 @@ import {
   RiHeartFill,
   RiVolumeMuteLine,
   RiVolumeUpLine,
+  RiVolumeDownLine,
   RiMicLine
 } from 'react-icons/ri';
 import { MdQueueMusic } from 'react-icons/md';
@@ -252,11 +253,13 @@ const Player: React.FC = () => {
         </button>
 
         {/* Volume controls */}
-        <button onClick={toggleMute} className="text-spotify-lightGray hover:text-white cursor-pointer">
+        <button onClick={toggleMute} className="text-spotify-lightGray hover:text-white cursor-pointer" title={isMuted ? "Unmute" : "Mute"}>
           {isMuted || volume === 0 ? (
-            <RiVolumeMuteLine className="w-5 h-5 text-red-500" />
+            <RiVolumeMuteLine className="w-5 h-5 text-red-500 hover:scale-105 transition-transform" />
+          ) : volume < 0.4 ? (
+            <RiVolumeDownLine className="w-5 h-5 hover:scale-105 transition-transform" />
           ) : (
-            <RiVolumeUpLine className="w-5 h-5" />
+            <RiVolumeUpLine className="w-5 h-5 hover:scale-105 transition-transform" />
           )}
         </button>
 
