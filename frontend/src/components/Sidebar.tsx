@@ -66,14 +66,18 @@ const Sidebar: React.FC = () => {
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `flex items-center gap-4 text-sm font-semibold transition-colors py-1.5 hover:text-white ${
+            `flex items-center gap-4 text-sm font-semibold transition-colors py-1.5 hover:text-white group ${
               isActive ? 'text-white' : 'text-spotify-lightGray'
             }`
           }
         >
           {({ isActive }) => (
             <>
-              {isActive ? <RiHome5Fill className="w-6 h-6" /> : <RiHome5Line className="w-6 h-6" />}
+              {isActive ? (
+                <RiHome5Fill className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+              ) : (
+                <RiHome5Line className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+              )}
               <span>Home</span>
             </>
           )}
@@ -82,14 +86,18 @@ const Sidebar: React.FC = () => {
         <NavLink
           to="/search"
           className={({ isActive }) =>
-            `flex items-center gap-4 text-sm font-semibold transition-colors py-1.5 hover:text-white ${
+            `flex items-center gap-4 text-sm font-semibold transition-colors py-1.5 hover:text-white group ${
               isActive ? 'text-white' : 'text-spotify-lightGray'
             }`
           }
         >
           {({ isActive }) => (
             <>
-              {isActive ? <RiSearchFill className="w-6 h-6" /> : <RiSearchLine className="w-6 h-6" />}
+              {isActive ? (
+                <RiSearchFill className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+              ) : (
+                <RiSearchLine className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+              )}
               <span>Search</span>
             </>
           )}
@@ -119,8 +127,8 @@ const Sidebar: React.FC = () => {
           to="/liked-songs"
           className="flex items-center gap-3 p-2 mx-1.5 rounded-md hover:bg-zinc-900 transition-colors group"
         >
-          <div className="w-12 h-12 rounded bg-gradient-to-br from-indigo-700 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shrink-0 group-hover:opacity-90">
-            <RiHeartFill className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded bg-gradient-to-br from-indigo-700 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shrink-0 group-hover:opacity-90 transition-transform duration-200 group-hover:scale-105">
+            <RiHeartFill className="w-6 h-6 text-white animate-pulse" style={{ animationDuration: '3s' }} />
           </div>
           <div className="flex flex-col overflow-hidden">
             <span className="text-sm font-semibold text-white truncate">Liked Songs</span>
@@ -151,7 +159,7 @@ const Sidebar: React.FC = () => {
                   <img
                     src={playlist.coverImage}
                     alt={playlist.name}
-                    className="w-12 h-12 rounded object-cover shadow shrink-0"
+                    className="w-12 h-12 rounded object-cover shadow shrink-0 transition-transform duration-200 group-hover:scale-105"
                   />
                   <div className="flex flex-col overflow-hidden">
                     <span className="text-sm font-semibold text-white truncate group-hover:text-spotify-green transition-colors">
