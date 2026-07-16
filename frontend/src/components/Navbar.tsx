@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { RiArrowLeftSLine, RiArrowRightSLine, RiSearchLine, RiUserLine } from 'react-icons/ri';
 import { FiLogOut } from 'react-icons/fi';
 import { MdOutlineDashboard } from 'react-icons/md';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -100,40 +101,48 @@ const Navbar: React.FC = () => {
             </button>
 
             {/* Dropdown Menu */}
-            {showDropdown && (
-              <div className="absolute right-0 mt-2 w-48 rounded bg-[#282828] border border-zinc-800 shadow-2xl p-1 z-50 text-sm flex flex-col font-medium">
-                {user.role === 'admin' && (
+            <AnimatePresence>
+              {showDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 mt-2 w-48 rounded bg-[#282828] border border-zinc-800 shadow-2xl p-1 z-50 text-sm flex flex-col font-medium"
+                >
+                  {user.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setShowDropdown(false)}
+                      className="flex items-center gap-3 px-3 py-2 text-white/95 hover:bg-zinc-700/50 rounded transition-colors"
+                    >
+                      <MdOutlineDashboard className="w-4 h-4 text-spotify-green" />
+                      <span>Admin Panel</span>
+                    </Link>
+                  )}
                   <Link
-                    to="/admin"
+                    to="/profile"
                     onClick={() => setShowDropdown(false)}
                     className="flex items-center gap-3 px-3 py-2 text-white/95 hover:bg-zinc-700/50 rounded transition-colors"
                   >
-                    <MdOutlineDashboard className="w-4 h-4 text-spotify-green" />
-                    <span>Admin Panel</span>
+                    <RiUserLine className="w-4 h-4" />
+                    <span>Profile</span>
                   </Link>
-                )}
-                <Link
-                  to="/profile"
-                  onClick={() => setShowDropdown(false)}
-                  className="flex items-center gap-3 px-3 py-2 text-white/95 hover:bg-zinc-700/50 rounded transition-colors"
-                >
-                  <RiUserLine className="w-4 h-4" />
-                  <span>Profile</span>
-                </Link>
-                <hr className="border-zinc-800 my-1" />
-                <button
-                  onClick={() => {
-                    logout();
-                    setShowDropdown(false);
-                    navigate('/login');
-                  }}
-                  className="flex items-center gap-3 px-3 py-2 text-red-400 hover:bg-zinc-700/50 rounded transition-colors text-left w-full cursor-pointer"
-                >
-                  <FiLogOut className="w-4 h-4" />
-                  <span>Log Out</span>
-                </button>
-              </div>
-            )}
+                  <hr className="border-zinc-800 my-1" />
+                  <button
+                    onClick={() => {
+                      logout();
+                      setShowDropdown(false);
+                      navigate('/login');
+                    }}
+                    className="flex items-center gap-3 px-3 py-2 text-red-400 hover:bg-zinc-700/50 rounded transition-colors text-left w-full cursor-pointer"
+                  >
+                    <FiLogOut className="w-4 h-4" />
+                    <span>Log Out</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ) : (
           <div className="flex items-center gap-4">
