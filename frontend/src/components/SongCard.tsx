@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Song } from '../types';
 import { usePlayer } from '../context/PlayerContext';
+import { ShareModal } from './ShareModal';
+import { Share2 } from 'lucide-react';
 import { RiPlayFill, RiPauseFill } from 'react-icons/ri';
 
 interface SongCardProps {
@@ -10,6 +12,7 @@ interface SongCardProps {
 
 const SongCard: React.FC<SongCardProps> = ({ song, playlistContext = [] }) => {
   const { currentSong, isPlaying, playSong, pauseSong, resumeSong } = usePlayer();
+  const [showShare, setShowShare] = React.useState(false);
 
   const isCurrent = currentSong?._id === song._id;
 
@@ -40,6 +43,19 @@ const SongCard: React.FC<SongCardProps> = ({ song, playlistContext = [] }) => {
           loading="lazy"
         />
 
+        {/* Floating Share Button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowShare(true);
+          }}
+          className="absolute top-2 right-2 w-8 h-8 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md border border-white/10 cursor-pointer"
+          title="Share track"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+        </button>
+
         {/* Floating Play/Pause Button */}
         <button
           onClick={handlePlayClick}
@@ -67,6 +83,15 @@ const SongCard: React.FC<SongCardProps> = ({ song, playlistContext = [] }) => {
           {song.artist?.name || 'Unknown Artist'}
         </span>
       </div>
+
+      <ShareModal
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        title={song.title}
+        subtitle={song.artist?.name}
+        coverImage={song.coverImage}
+        type="track"
+      />
     </div>
   );
 };
