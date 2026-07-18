@@ -17,6 +17,10 @@ interface PlayerContextType {
   showEqualizer: boolean;
   equalizerPreset: string;
   playbackRate: number;
+  sleepTimerTimeLeft: number | null;
+  showSleepModal: boolean;
+  setSleepTimer: (minutes: number | null) => void;
+  toggleSleepModal: () => void;
   setPlaybackRate: (rate: number) => void;
   setEqualizerPreset: (preset: string) => void;
   toggleEqualizer: () => void;
@@ -61,6 +65,40 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [showEqualizer, setShowEqualizer] = useState(false);
   const [equalizerPreset, setEqualizerPreset] = useState<string>('bass-boost');
   const [playbackRate, setPlaybackRateState] = useState<number>(1.0);
+  const [sleepTimerTimeLeft, setSleepTimerTimeLeft] = useState<number | null>(null);
+  const [showSleepModal, setShowSleepModal] = useState(false);
+
+  const toggleSleepModal = () => {
+    setShowSleepModal((prev) => !prev);
+  };
+
+  const setSleepTimer = (minutes: number | null) => {
+    if (minutes === null) {
+      setSleepTimerTimeLeft(null);
+    } else {
+      setSleepTimerTimeLeft(minutes * 60);
+    }
+  };
+
+  // Sleep Timer Countdown Effect
+  useEffect(() => {
+    if (sleepTimerTimeLeft === null) return;
+
+    if (sleepTimerTimeLeft <= 0) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+      setSleepTimerTimeLeft(null);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setSleepTimerTimeLeft((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [sleepTimerTimeLeft]);
 
   const setPlaybackRate = (rate: number) => {
     setPlaybackRateState(rate);
@@ -347,6 +385,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         showEqualizer,
         equalizerPreset,
         playbackRate,
+        sleepTimerTimeLeft,
+        showSleepModal,
+        setSleepTimer,
+        toggleSleepModal,
         setPlaybackRate,
         setEqualizerPreset,
         toggleEqualizer,

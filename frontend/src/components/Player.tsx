@@ -5,7 +5,8 @@ import api from '../services/api';
 import { EqualizerModal } from './EqualizerModal';
 import { QueueDrawer } from './QueueDrawer';
 import { AmbientPlayer } from './AmbientPlayer';
-import { Sliders, Maximize2 } from 'lucide-react';
+import { SleepTimerModal } from './SleepTimerModal';
+import { Sliders, Maximize2, Moon } from 'lucide-react';
 import { 
   RiPlayCircleFill, 
   RiPauseCircleFill, 
@@ -51,6 +52,8 @@ const Player: React.FC = () => {
     toggleEqualizer,
     playbackRate,
     setPlaybackRate,
+    sleepTimerTimeLeft,
+    toggleSleepModal,
   } = usePlayer();
 
   const [isLiked, setIsLiked] = useState(false);
@@ -283,6 +286,20 @@ const Player: React.FC = () => {
           <Maximize2 className="w-4 h-4" />
         </button>
 
+        {/* Sleep Timer button */}
+        <button
+          onClick={toggleSleepModal}
+          className={`hover:text-white transition-colors relative cursor-pointer ${
+            sleepTimerTimeLeft !== null ? 'text-purple-400' : 'text-spotify-lightGray'
+          }`}
+          title={sleepTimerTimeLeft !== null ? `Sleep Timer: ${Math.ceil(sleepTimerTimeLeft / 60)}m` : 'Sleep Timer'}
+        >
+          <Moon className="w-4 h-4" />
+          {sleepTimerTimeLeft !== null && (
+            <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-purple-400 animate-ping" />
+          )}
+        </button>
+
         {/* Toggle Equalizer modal button */}
         <button
           onClick={toggleEqualizer}
@@ -342,6 +359,7 @@ const Player: React.FC = () => {
       <QueueDrawer isOpen={showQueue} onClose={() => setShowQueue(false)} />
       <EqualizerModal />
       <AmbientPlayer isOpen={showAmbient} onClose={() => setShowAmbient(false)} />
+      <SleepTimerModal />
     </div>
   );
 };
