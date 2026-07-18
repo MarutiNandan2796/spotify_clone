@@ -145,3 +145,47 @@ export const deleteSong = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const incrementPlayCount = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const song = await Song.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { plays: 1 } },
+      { new: true }
+    );
+
+    if (!song) {
+      return res.status(404).json({ success: false, message: 'Song not found' });
+    }
+
+    res.status(200).json({ success: true, plays: song.plays });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPlaybackAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const totalSongs = await Song.countDocuments();
+    const totalPlaysResult = await Song.aggregate([
+      { $group: { _id: null, totalPlays: { $sum: '$plays' } } }
+    ]);
+    const totalPlays = totalPlaysResult[0]?.totalPlays || 0;
+    const topSongs = await Song.find()
+      .sort({ plays: -1 })
+      .limit(5)
+      .populate('artist', 'name avatar')
+      .populate('album', 'title coverImage');
+
+    res.status(200).json({
+      success: true,
+      analytics: {
+        totalSongs,
+        totalPlays,
+        topSongs,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

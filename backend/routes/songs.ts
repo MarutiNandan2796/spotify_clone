@@ -6,6 +6,8 @@ import {
   getFeaturedSongs,
   createSong,
   deleteSong,
+  incrementPlayCount,
+  getPlaybackAnalytics,
 } from '../controllers/songController';
 import { protect, adminOnly } from '../middleware/authMiddleware';
 import { upload } from '../middleware/uploadMiddleware';
@@ -15,6 +17,8 @@ const router = Router();
 router.get('/', getAllSongs);
 router.get('/trending', getTrendingSongs);
 router.get('/featured', getFeaturedSongs);
+router.get('/analytics/summary', getPlaybackAnalytics);
+router.post('/:id/play', incrementPlayCount);
 router.get('/:id', getSongById);
 
 // Admin only routes
