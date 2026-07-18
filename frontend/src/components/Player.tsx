@@ -3,6 +3,7 @@ import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { EqualizerModal } from './EqualizerModal';
+import { QueueDrawer } from './QueueDrawer';
 import { Sliders } from 'lucide-react';
 import { 
   RiPlayCircleFill, 
@@ -288,43 +289,9 @@ const Player: React.FC = () => {
           className="w-20 sm:w-24 accent-spotify-green h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
         />
 
-        {/* Queue Dropdown Drawer */}
-        {showQueue && (
-          <div className="absolute right-0 bottom-14 w-80 bg-spotify-dark/95 border border-zinc-800 rounded-lg shadow-2xl p-3 z-50 text-sm max-h-[300px] overflow-y-auto">
-            <h4 className="font-bold border-b border-zinc-800 pb-2 mb-2 flex justify-between items-center text-white">
-              <span>Play Queue</span>
-              <span className="text-xs font-normal text-spotify-lightGray">{queue.length} songs</span>
-            </h4>
-            {queue.length === 0 ? (
-              <p className="text-xs text-zinc-500 py-4 text-center">Queue is empty</p>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {queue.map((song, index) => {
-                  const isActive = currentSong?._id === song._id;
-                  return (
-                    <div
-                      key={`${song._id}-${index}`}
-                      onClick={() => playSong(song, queue)}
-                      className={`flex items-center gap-2 p-1.5 rounded cursor-pointer transition-colors ${
-                        isActive
-                          ? 'bg-zinc-800/80 text-spotify-green font-semibold'
-                          : 'hover:bg-zinc-800/50 text-zinc-300'
-                      }`}
-                    >
-                      <img src={song.coverImage} className="w-8 h-8 rounded object-cover" alt="" />
-                      <div className="flex flex-col overflow-hidden flex-1 leading-none">
-                        <span className="text-xs truncate">{song.title}</span>
-                        <span className="text-[10px] text-zinc-500 truncate">{song.artist?.name}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
+      <QueueDrawer isOpen={showQueue} onClose={() => setShowQueue(false)} />
       <EqualizerModal />
     </div>
   );
