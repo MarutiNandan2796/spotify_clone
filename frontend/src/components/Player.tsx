@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { EqualizerModal } from './EqualizerModal';
 import { QueueDrawer } from './QueueDrawer';
-import { Sliders } from 'lucide-react';
+import { AmbientPlayer } from './AmbientPlayer';
+import { Sliders, Maximize2 } from 'lucide-react';
 import { 
   RiPlayCircleFill, 
   RiPauseCircleFill, 
@@ -52,6 +53,7 @@ const Player: React.FC = () => {
 
   const [isLiked, setIsLiked] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
+  const [showAmbient, setShowAmbient] = useState(false);
 
   // Check if current song is liked by user
   useEffect(() => {
@@ -235,6 +237,15 @@ const Player: React.FC = () => {
 
       {/* RIGHT: Volume & Queue */}
       <div className="flex items-center gap-3 w-1/3 justify-end relative">
+        {/* Toggle Ambient View button */}
+        <button
+          onClick={() => setShowAmbient(true)}
+          className="hover:text-white text-spotify-lightGray transition-colors cursor-pointer"
+          title="Full-Screen Ambient View"
+        >
+          <Maximize2 className="w-4 h-4" />
+        </button>
+
         {/* Toggle Equalizer modal button */}
         <button
           onClick={toggleEqualizer}
@@ -293,6 +304,7 @@ const Player: React.FC = () => {
 
       <QueueDrawer isOpen={showQueue} onClose={() => setShowQueue(false)} />
       <EqualizerModal />
+      <AmbientPlayer isOpen={showAmbient} onClose={() => setShowAmbient(false)} />
     </div>
   );
 };
