@@ -28,9 +28,16 @@ A production-quality music streaming web application styled with glassmorphism a
 
 ## ⭐ Key Features
 
-- **Interactive Synchronized Lyrics**: Real-time karaoke-style lyrics display that automatically scrolls and highlights the active line based on playback time, with dynamic background gradients matching the song genre and click-to-seek support.
+- **Audio Equalizer & Frequency Spectrum**: Custom frequency band adjustment modal with live spectrum visualizer bars and 6 acoustic presets (Bass Boost, Vocal Boost, Treble Boost, Acoustic, Electronic, Flat).
+- **Interactive Queue Drawer**: Slide-over queue drawer displaying current playing track, upcoming items, move up/down track reordering, and instant queue clearing.
+- **Full-Screen Ambient Cinema View**: Dynamic backdrop glow mode featuring glassmorphism visuals, ambient aura, album art spin, and prominent playback controls.
+- **Variable Playback Speed**: Precise speed controller (0.5x, 0.75x, 1.0x, 1.25x, 1.5x, 2.0x) for audio playback.
+- **Sleep Timer Utility**: Countdown auto-pause timer (5m, 15m, 30m, 45m, 60m) to automatically stop playback when resting.
+- **Recent Search History & Genre Chips**: Persistent search query chips with quick removal and instant filter pills for Pop, Hip-Hop, Rock, Electronic, Indie, and Chill genres.
+- **Custom UI Accent Theme Selector**: Personalize interface highlight colors with 5 curated themes (Emerald Green, Cyber Cyan, Electric Purple, Sunset Amber, Rose Gold).
+- **Social Share Modal**: Instant link copy with formatted embed card preview and direct share shortcuts.
+- **Interactive Synchronized Lyrics**: Real-time karaoke-style lyrics display that automatically scrolls and highlights active lines with dynamic background gradients matching the song genre.
 - **Keyboard Shortcuts Navigation**: Use global keyboard controls (`Space` to play/pause, `M` to mute/unmute, `Right/Left arrows` to skip forward/backward 5s) for instant playback adjustment.
-- **Tailwind Glassmorphic UI/UX**: Exquisite design detailing with hover effects, card expansions, and sleek page transitions built using Framer Motion.
 
 ---
 
