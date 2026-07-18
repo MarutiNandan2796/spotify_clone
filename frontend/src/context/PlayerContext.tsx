@@ -16,6 +16,8 @@ interface PlayerContextType {
   showLyrics: boolean;
   showEqualizer: boolean;
   equalizerPreset: string;
+  playbackRate: number;
+  setPlaybackRate: (rate: number) => void;
   setEqualizerPreset: (preset: string) => void;
   toggleEqualizer: () => void;
   playSong: (song: Song, newQueue?: Song[]) => void;
@@ -58,6 +60,14 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [showLyrics, setShowLyrics] = useState(false);
   const [showEqualizer, setShowEqualizer] = useState(false);
   const [equalizerPreset, setEqualizerPreset] = useState<string>('bass-boost');
+  const [playbackRate, setPlaybackRateState] = useState<number>(1.0);
+
+  const setPlaybackRate = (rate: number) => {
+    setPlaybackRateState(rate);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = rate;
+    }
+  };
 
   const toggleEqualizer = () => {
     setShowEqualizer((prev) => !prev);
@@ -118,6 +128,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     setCurrentSong(song);
     audioRef.current.src = song.audioUrl;
+    audioRef.current.playbackRate = playbackRate;
     audioRef.current.play()
       .then(() => {
         setIsPlaying(true);
@@ -335,6 +346,8 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         showLyrics,
         showEqualizer,
         equalizerPreset,
+        playbackRate,
+        setPlaybackRate,
         setEqualizerPreset,
         toggleEqualizer,
         playSong,

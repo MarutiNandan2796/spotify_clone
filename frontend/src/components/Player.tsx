@@ -49,11 +49,14 @@ const Player: React.FC = () => {
     toggleLyrics,
     showEqualizer,
     toggleEqualizer,
+    playbackRate,
+    setPlaybackRate,
   } = usePlayer();
 
   const [isLiked, setIsLiked] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
   const [showAmbient, setShowAmbient] = useState(false);
+  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
 
   // Check if current song is liked by user
   useEffect(() => {
@@ -237,6 +240,40 @@ const Player: React.FC = () => {
 
       {/* RIGHT: Volume & Queue */}
       <div className="flex items-center gap-3 w-1/3 justify-end relative">
+        {/* Playback Speed selector */}
+        <div className="relative">
+          <button
+            onClick={() => setShowSpeedMenu(!showSpeedMenu)}
+            className={`px-1.5 py-0.5 rounded text-[11px] font-bold border transition-all cursor-pointer ${
+              playbackRate !== 1.0
+                ? 'bg-green-500/20 text-green-400 border-green-500/40'
+                : 'text-zinc-400 border-zinc-700 hover:text-white hover:border-zinc-500'
+            }`}
+            title="Playback Speed"
+          >
+            {playbackRate}x
+          </button>
+
+          {showSpeedMenu && (
+            <div className="absolute right-0 bottom-8 w-24 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-1 z-50 flex flex-col gap-1 text-xs">
+              {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((rate) => (
+                <button
+                  key={rate}
+                  onClick={() => {
+                    setPlaybackRate(rate);
+                    setShowSpeedMenu(false);
+                  }}
+                  className={`w-full text-left px-3 py-1 rounded.lg transition-colors ${
+                    playbackRate === rate ? 'bg-green-500/20 text-green-400 font-bold' : 'text-zinc-300 hover:bg-zinc-800'
+                  }`}
+                >
+                  {rate}x
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Toggle Ambient View button */}
         <button
           onClick={() => setShowAmbient(true)}
