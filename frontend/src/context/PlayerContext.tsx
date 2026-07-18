@@ -14,6 +14,10 @@ interface PlayerContextType {
   queue: Song[];
   history: Song[];
   showLyrics: boolean;
+  showEqualizer: boolean;
+  equalizerPreset: string;
+  setEqualizerPreset: (preset: string) => void;
+  toggleEqualizer: () => void;
   playSong: (song: Song, newQueue?: Song[]) => void;
   pauseSong: () => void;
   resumeSong: () => void;
@@ -52,6 +56,12 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [originalQueue, setOriginalQueue] = useState<Song[]>([]); // To preserve original sequence when shuffle is toggled
   const [history, setHistory] = useState<Song[]>([]);
   const [showLyrics, setShowLyrics] = useState(false);
+  const [showEqualizer, setShowEqualizer] = useState(false);
+  const [equalizerPreset, setEqualizerPreset] = useState<string>('bass-boost');
+
+  const toggleEqualizer = () => {
+    setShowEqualizer((prev) => !prev);
+  };
 
   // Initialize Audio
   useEffect(() => {
@@ -323,6 +333,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         queue,
         history,
         showLyrics,
+        showEqualizer,
+        equalizerPreset,
+        setEqualizerPreset,
+        toggleEqualizer,
         playSong,
         pauseSong,
         resumeSong,

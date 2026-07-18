@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { EqualizerModal } from './EqualizerModal';
+import { Sliders } from 'lucide-react';
 import { 
   RiPlayCircleFill, 
   RiPauseCircleFill, 
@@ -43,6 +45,8 @@ const Player: React.FC = () => {
     toggleRepeat,
     showLyrics,
     toggleLyrics,
+    showEqualizer,
+    toggleEqualizer,
   } = usePlayer();
 
   const [isLiked, setIsLiked] = useState(false);
@@ -230,6 +234,17 @@ const Player: React.FC = () => {
 
       {/* RIGHT: Volume & Queue */}
       <div className="flex items-center gap-3 w-1/3 justify-end relative">
+        {/* Toggle Equalizer modal button */}
+        <button
+          onClick={toggleEqualizer}
+          className={`hover:text-white transition-colors relative cursor-pointer ${
+            showEqualizer ? 'text-spotify-green' : 'text-spotify-lightGray'
+          }`}
+          title="Audio Equalizer"
+        >
+          <Sliders className="w-4 h-4" />
+        </button>
+
         {/* Toggle Lyrics button */}
         <button
           onClick={toggleLyrics}
@@ -309,6 +324,8 @@ const Player: React.FC = () => {
           </div>
         )}
       </div>
+
+      <EqualizerModal />
     </div>
   );
 };
