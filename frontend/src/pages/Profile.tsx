@@ -272,6 +272,32 @@ const Profile: React.FC = () => {
               </div>
             </form>
           )}
+
+          {/* Theme Color Accent Customizer */}
+          <div className="border-t border-zinc-800 pt-5 mt-2 flex flex-col gap-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">UI Accent Color Theme</h4>
+            <div className="flex items-center gap-3">
+              {[
+                { name: 'Emerald Green', hex: '#1db954', glow: 'rgba(29, 185, 84, 0.4)' },
+                { name: 'Neon Cyan', hex: '#06b6d4', glow: 'rgba(6, 182, 212, 0.4)' },
+                { name: 'Electric Purple', hex: '#a855f7', glow: 'rgba(168, 85, 247, 0.4)' },
+                { name: 'Sunset Amber', hex: '#f59e0b', glow: 'rgba(245, 158, 11, 0.4)' },
+                { name: 'Rose Gold', hex: '#f43f5e', glow: 'rgba(244, 63, 94, 0.4)' },
+              ].map((accent) => (
+                <button
+                  key={accent.name}
+                  onClick={() => {
+                    document.documentElement.style.setProperty('--accent-color', accent.hex);
+                    document.documentElement.style.setProperty('--accent-glow', accent.glow);
+                    localStorage.setItem('spotify_theme_accent', JSON.stringify(accent));
+                  }}
+                  style={{ backgroundColor: accent.hex }}
+                  className="w-8 h-8 rounded-full border-2 border-white/20 hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-md"
+                  title={accent.name}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Listening History (Right Panel) */}
