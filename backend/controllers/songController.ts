@@ -5,6 +5,12 @@ import Album from '../models/Album';
 import Playlist from '../models/Playlist';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 
+/**
+ * Retrieves all songs in the database, populating their artist and album properties.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getAllSongs = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const songs = await Song.find()
@@ -17,6 +23,12 @@ export const getAllSongs = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+/**
+ * Retrieves a song by its unique ID.
+ * @param req - Express request object containing song ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getSongById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const song = await Song.findById(req.params.id)
@@ -33,6 +45,12 @@ export const getSongById = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+/**
+ * Retrieves trending songs in the database ordered by play count.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getTrendingSongs = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const songs = await Song.find()
@@ -47,6 +65,12 @@ export const getTrendingSongs = async (req: Request, res: Response, next: NextFu
   }
 };
 
+/**
+ * Retrieves songs marked as featured in the database.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getFeaturedSongs = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const songs = await Song.find({ isFeatured: true })
@@ -59,6 +83,12 @@ export const getFeaturedSongs = async (req: Request, res: Response, next: NextFu
   }
 };
 
+/**
+ * Creates a new song, uploading the audio and cover image to Cloudinary.
+ * @param req - Express request object containing files and song attributes in body
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const createSong = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, artistId, albumId, duration, genre, isFeatured } = req.body;
@@ -121,6 +151,12 @@ export const createSong = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * Deletes a song from database, removing its reference from all albums and playlists.
+ * @param req - Express request object containing song ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const deleteSong = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const songId = req.params.id;
@@ -146,6 +182,12 @@ export const deleteSong = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * Increments the play count of a specific song.
+ * @param req - Express request object containing song ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const incrementPlayCount = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const song = await Song.findByIdAndUpdate(
@@ -164,6 +206,12 @@ export const incrementPlayCount = async (req: Request, res: Response, next: Next
   }
 };
 
+/**
+ * Retrieves aggregate play counts and most-played tracks.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getPlaybackAnalytics = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const totalSongs = await Song.countDocuments();
