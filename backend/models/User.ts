@@ -1,16 +1,28 @@
 import { Schema, model, Document } from 'mongoose';
 
+/**
+ * Interface representing the User document model in Mongoose database.
+ */
 export interface IUser extends Document {
+  /** The display name of the user */
   name: string;
+  /** Unique email address of the user */
   email: string;
+  /** Hashed password of the user (optional for social/testing integration scenarios) */
   password?: string;
+  /** Avatar image URL of the user */
   avatar: string;
+  /** Access role for authentication/authorization ('user' | 'admin') */
   role: 'user' | 'admin';
+  /** Array of Playlist reference IDs created or saved by this user */
   playlists: Schema.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
 
+/**
+ * Mongoose Schema definition for the User resource.
+ */
 const UserSchema = new Schema<IUser>(
   {
     name: {
