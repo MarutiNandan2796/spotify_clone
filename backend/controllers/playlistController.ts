@@ -5,6 +5,12 @@ import User from '../models/User';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { AuthRequest } from '../middleware/authMiddleware';
 
+/**
+ * Retrieves all playlists created by the logged in user.
+ * @param req - AuthRequest containing user identity
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getUserPlaylists = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const playlists = await Playlist.find({ creator: req.user.id })
@@ -17,6 +23,12 @@ export const getUserPlaylists = async (req: AuthRequest, res: Response, next: Ne
   }
 };
 
+/**
+ * Retrieves a single playlist by ID. Access is denied if it is private and the caller is not the creator.
+ * @param req - AuthRequest containing user identity and playlist ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getPlaylistById = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const playlist = await Playlist.findById(req.params.id)
@@ -45,6 +57,12 @@ export const getPlaylistById = async (req: AuthRequest, res: Response, next: Nex
   }
 };
 
+/**
+ * Creates a new playlist for the logged in user.
+ * @param req - AuthRequest containing playlist attributes in body
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const createPlaylist = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { name, description, isPublic } = req.body;
@@ -70,6 +88,12 @@ export const createPlaylist = async (req: AuthRequest, res: Response, next: Next
   }
 };
 
+/**
+ * Updates a playlist's properties (name, description, privacy, cover image).
+ * @param req - AuthRequest containing user identity, playlist ID in params, and new properties in body/files
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const updatePlaylist = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
@@ -99,6 +123,12 @@ export const updatePlaylist = async (req: AuthRequest, res: Response, next: Next
   }
 };
 
+/**
+ * Deletes a playlist and removes its reference from the creator's playlist list.
+ * @param req - AuthRequest containing user identity and playlist ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const deletePlaylist = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
@@ -122,6 +152,12 @@ export const deletePlaylist = async (req: AuthRequest, res: Response, next: Next
   }
 };
 
+/**
+ * Adds a song to a user's playlist.
+ * @param req - AuthRequest containing playlistId and songId in body
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const addSongToPlaylist = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { playlistId, songId } = req.body;
@@ -153,6 +189,12 @@ export const addSongToPlaylist = async (req: AuthRequest, res: Response, next: N
   }
 };
 
+/**
+ * Removes a song from a user's playlist.
+ * @param req - AuthRequest containing playlistId and songId in body
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const removeSongFromPlaylist = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { playlistId, songId } = req.body;
@@ -175,6 +217,12 @@ export const removeSongFromPlaylist = async (req: AuthRequest, res: Response, ne
   }
 };
 
+/**
+ * Reorders the songs in a playlist.
+ * @param req - AuthRequest containing songs array in body
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const reorderPlaylistSongs = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { songs } = req.body; // Array of song IDs in new order
