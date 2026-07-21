@@ -4,6 +4,12 @@ import Song from '../models/Song';
 import Album from '../models/Album';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 
+/**
+ * Retrieves all artists in the database.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getAllArtists = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const artists = await Artist.find();
@@ -13,6 +19,12 @@ export const getAllArtists = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+/**
+ * Retrieves a single artist profile by ID along with their popular tracks, albums, and similar artists.
+ * @param req - Express request object containing artist ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getArtistById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const artistId = req.params.id;
@@ -46,6 +58,12 @@ export const getArtistById = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+/**
+ * Creates a new artist profile, uploading an avatar and cover banner if provided.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const createArtist = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, bio, monthlyListeners } = req.body;
@@ -86,6 +104,12 @@ export const createArtist = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+/**
+ * Deletes an artist profile by ID, as well as all songs and albums associated with them.
+ * @param req - Express request object containing artist ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const deleteArtist = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const artistId = req.params.id;
