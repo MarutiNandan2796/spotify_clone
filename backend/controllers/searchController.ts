@@ -5,6 +5,12 @@ import Album from '../models/Album';
 import Playlist from '../models/Playlist';
 import { AuthRequest } from '../middleware/authMiddleware';
 
+/**
+ * Performs a global search across songs, artists, albums, and playlists matching the query parameter.
+ * @param req - AuthRequest containing the query string 'q' in req.query
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const globalSearch = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const query = req.query.q as string;
