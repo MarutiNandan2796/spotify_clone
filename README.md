@@ -185,3 +185,13 @@ You can run the entire stack (Database, Server API, Web Client) using Docker Com
 - `GET /api/admin/analytics` - System metrics counts (Total songs, plays, albums).
 - `GET /api/admin/users` - List all registered user accounts.
 - `DELETE /api/admin/users/:userId` - Delete user account.
+
+---
+
+## 🛠️ Code Standards & Documentation
+
+To maintain readability and codebase sustainability, this project follows the JSDoc commenting standard:
+- **JSDoc Comments**: All backend controllers, model interfaces, schemas, utility helpers, and frontend TypeScript type definitions are documented using structured JSDoc comments.
+- **Type Annotations**: High-fidelity TypeScript interfaces exist under `frontend/src/types/index.ts` and `backend/models` to ensure full compile-time type safety across the monorepo.
+- **Linting & Formatting**: Follows Prettier code formatting rules configured in the root directory.
+
