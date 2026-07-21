@@ -3,6 +3,12 @@ import History from '../models/History';
 import Song from '../models/Song';
 import { AuthRequest } from '../middleware/authMiddleware';
 
+/**
+ * Retrieves the recently played songs (up to 30 items) for the logged in user.
+ * @param req - AuthRequest containing user identity
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getHistory = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const historyLogs = await History.find({ user: req.user.id })
@@ -25,6 +31,12 @@ export const getHistory = async (req: AuthRequest, res: Response, next: NextFunc
   }
 };
 
+/**
+ * Adds a song to the user's play history and increments the song's play counter.
+ * @param req - AuthRequest containing user identity and song ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const addToHistory = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { songId } = req.params;
