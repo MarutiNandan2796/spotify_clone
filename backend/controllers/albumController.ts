@@ -3,6 +3,12 @@ import Album from '../models/Album';
 import Song from '../models/Song';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 
+/**
+ * Retrieves all albums in the database, populating their artist information.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getAllAlbums = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const albums = await Album.find().populate('artist', 'name avatar');
@@ -12,6 +18,12 @@ export const getAllAlbums = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+/**
+ * Retrieves a single album by its ID, populating artist info and the tracks linked to it.
+ * @param req - Express request object containing album ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getAlbumById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const album = await Album.findById(req.params.id)
@@ -34,6 +46,12 @@ export const getAlbumById = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+/**
+ * Creates a new album. Uploads a cover image to Cloudinary if provided.
+ * @param req - Express request object containing body parameter title, artistId, releaseDate, genre
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const createAlbum = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, artistId, releaseDate, genre } = req.body;
@@ -62,6 +80,12 @@ export const createAlbum = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+/**
+ * Deletes an album by its ID and unsets the album field from all associated songs.
+ * @param req - Express request object containing album ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const deleteAlbum = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const albumId = req.params.id;
