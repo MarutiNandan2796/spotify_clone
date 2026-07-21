@@ -3,6 +3,12 @@ import Like from '../models/Like';
 import Song from '../models/Song';
 import { AuthRequest } from '../middleware/authMiddleware';
 
+/**
+ * Retrieves all songs liked by the logged in user, populating their artist and album information.
+ * @param req - AuthRequest containing user identity
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getLikedSongs = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const likes = await Like.find({ user: req.user.id })
@@ -23,6 +29,12 @@ export const getLikedSongs = async (req: AuthRequest, res: Response, next: NextF
   }
 };
 
+/**
+ * Toggles the liked status of a song for the logged in user.
+ * @param req - AuthRequest containing user identity and song ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const toggleLikeSong = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { songId } = req.params;
@@ -49,6 +61,12 @@ export const toggleLikeSong = async (req: AuthRequest, res: Response, next: Next
   }
 };
 
+/**
+ * Checks if a specific song is currently liked by the logged in user.
+ * @param req - AuthRequest containing user identity and song ID in params
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const checkIsLiked = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { songId } = req.params;
