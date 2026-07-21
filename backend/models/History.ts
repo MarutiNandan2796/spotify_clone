@@ -1,11 +1,21 @@
 import { Schema, model, Document } from 'mongoose';
 
+/**
+ * Interface representing the History document model in Mongoose database.
+ * Tracks when a specific user plays a song.
+ */
 export interface IHistory extends Document {
+  /** Reference ID of the User who played the song */
   user: Schema.Types.ObjectId;
+  /** Reference ID of the Song that was played */
   song: Schema.Types.ObjectId;
+  /** Timestamp when the song play occurred */
   playedAt: Date;
 }
 
+/**
+ * Mongoose Schema definition for the History resource.
+ */
 const HistorySchema = new Schema<IHistory>(
   {
     user: {
