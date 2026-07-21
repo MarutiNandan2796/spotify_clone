@@ -1,12 +1,21 @@
 import { Schema, model, Document } from 'mongoose';
 
+/**
+ * Interface representing the Like document model in Mongoose database.
+ * Tracks user preference (likes) for particular songs.
+ */
 export interface ILike extends Document {
+  /** Reference ID of the User who liked the song */
   user: Schema.Types.ObjectId;
+  /** Reference ID of the Song that was liked */
   song: Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
+/**
+ * Mongoose Schema definition for the Like resource.
+ */
 const LikeSchema = new Schema<ILike>(
   {
     user: {
