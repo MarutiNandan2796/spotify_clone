@@ -1,3 +1,6 @@
+/**
+ * Represents a registered user in the application.
+ */
 export interface User {
   id: string;
   _id: string;
@@ -9,6 +12,9 @@ export interface User {
   createdAt: string;
 }
 
+/**
+ * Represents a music artist profile.
+ */
 export interface Artist {
   _id: string;
   name: string;
@@ -19,6 +25,9 @@ export interface Artist {
   createdAt: string;
 }
 
+/**
+ * Represents a music album containing multiple songs.
+ */
 export interface Album {
   _id: string;
   title: string;
@@ -30,6 +39,9 @@ export interface Album {
   createdAt: string;
 }
 
+/**
+ * Represents a playable song track.
+ */
 export interface Song {
   _id: string;
   title: string;
@@ -44,6 +56,9 @@ export interface Song {
   createdAt: string;
 }
 
+/**
+ * Represents a playlist created by a user containing custom songs.
+ */
 export interface Playlist {
   _id: string;
   name: string;
@@ -58,6 +73,9 @@ export interface Playlist {
   createdAt: string;
 }
 
+/**
+ * Represents a single line of lyrics with timestamp offset in seconds.
+ */
 export interface LyricLine {
   time: number;
   text: string;
