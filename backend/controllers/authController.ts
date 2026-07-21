@@ -5,6 +5,12 @@ import { generateToken } from '../utils/tokenHelper';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { AuthRequest } from '../middleware/authMiddleware';
 
+/**
+ * Registers a new user. The first registered user is automatically assigned the 'admin' role.
+ * @param req - Express request object containing name, email, and password
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, email, password } = req.body;
@@ -53,6 +59,12 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
+/**
+ * Logins an existing user by verifying credentials and returning a JWT token.
+ * @param req - Express request object containing email and password
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
@@ -89,6 +101,12 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
+/**
+ * Retrieves the current logged in user's profile based on the JWT payload.
+ * @param req - AuthRequest object containing current user identity
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const getMe = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -101,6 +119,12 @@ export const getMe = async (req: AuthRequest, res: Response, next: NextFunction)
   }
 };
 
+/**
+ * Updates the profile of the current logged in user (name, password, avatar).
+ * @param req - AuthRequest object containing new profile fields and optional avatar file
+ * @param res - Express response object
+ * @param next - Next function callback
+ */
 export const updateProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { name, password } = req.body;
