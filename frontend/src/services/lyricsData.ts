@@ -1,5 +1,9 @@
 import type { LyricLine } from '../types';
 
+/**
+ * A local static mapping containing curated synchronized lyrics for predefined audio tracks.
+ * Each entry maps a lowercased song title key to an array of LyricLine objects.
+ */
 const lyricsMap: Record<string, LyricLine[]> = {
   'summer breeze lullaby': [
     { time: 0, text: '♪ (Mellow instrumental opening) ♪' },
