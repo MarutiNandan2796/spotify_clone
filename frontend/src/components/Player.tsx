@@ -23,6 +23,16 @@ import {
 } from 'react-icons/ri';
 import { MdQueueMusic } from 'react-icons/md';
 
+/**
+ * Player Component
+ * Renders the persistent bottom media player bar. Handles current track details display,
+ * playback control triggers (play/pause, shuffle, skip back/forward, repeat, timeline seek slider),
+ * and utility dock triggers (lyrics overlay toggle, equalizer presets modal, sleep timer configuration,
+ * queue drawer toggle, and audio volume slider).
+ * Includes interactive global keyboard hotkeys for convenience.
+ *
+ * @returns {React.ReactElement} The rendered Player component.
+ */
 const Player: React.FC = () => {
   const { user } = useAuth();
   const {
