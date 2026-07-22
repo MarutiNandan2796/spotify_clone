@@ -14,6 +14,13 @@ import {
 import { VscLibrary } from 'react-icons/vsc';
 import { BiMusic } from 'react-icons/bi';
 
+/**
+ * Sidebar Component
+ * Displays the persistent left sidebar. Includes logo link, primary navigation (Home, Search),
+ * user library shortcut for Liked Songs, and user's custom playlists with a quick-create handler.
+ *
+ * @returns {React.ReactElement} The rendered Sidebar component.
+ */
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
