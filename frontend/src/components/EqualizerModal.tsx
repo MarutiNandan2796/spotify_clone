@@ -13,6 +13,13 @@ const PRESETS = [
 
 const BANDS = ['60Hz', '230Hz', '910Hz', '3.6kHz', '14kHz'];
 
+/**
+ * EqualizerModal Component
+ * Renders an overlay modal displaying equalizer bands and predefined presets (Flat, Bass Boost, Vocal Boost, Acoustic, etc.).
+ * Includes a simulated realtime audio frequency visualizer spectrum.
+ *
+ * @returns {React.ReactElement | null} The rendered EqualizerModal component, or null if hidden.
+ */
 export const EqualizerModal: React.FC = () => {
   const { showEqualizer, toggleEqualizer, equalizerPreset, setEqualizerPreset, isPlaying } = usePlayer();
 
