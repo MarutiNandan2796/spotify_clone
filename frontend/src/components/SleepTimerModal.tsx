@@ -10,6 +10,13 @@ const TIMER_OPTIONS = [
   { label: '1 Hour', minutes: 60 },
 ];
 
+/**
+ * SleepTimerModal Component
+ * Renders an overlay modal with preset sleep timer durations (5m, 15m, 30m, 45m, 60m).
+ * Shows active countdown if configured, allowing users to schedule automatic playback termination.
+ *
+ * @returns {React.ReactElement | null} The rendered SleepTimerModal component, or null if modal is hidden.
+ */
 export const SleepTimerModal: React.FC = () => {
   const { showSleepModal, toggleSleepModal, sleepTimerTimeLeft, setSleepTimer } = usePlayer();
 
