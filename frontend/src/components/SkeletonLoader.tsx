@@ -1,10 +1,22 @@
 import React from 'react';
 
+/**
+ * @interface SkeletonLoaderProps
+ * @property {'card' | 'track' | 'banner' | 'profile'} type - The layout style of skeleton loader to render.
+ * @property {number} [count] - The number of loader instances to render. Defaults to 1.
+ */
 interface SkeletonLoaderProps {
   type: 'card' | 'track' | 'banner' | 'profile';
   count?: number;
 }
 
+/**
+ * SkeletonLoader Component
+ * Renders a set of animated placeholders (cards, lists, banners, or profiles) to simulate layout during async data fetching.
+ *
+ * @param {SkeletonLoaderProps} props - Component properties.
+ * @returns {React.ReactElement} The rendered SkeletonLoader component.
+ */
 const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type, count = 1 }) => {
   const CardSkeleton = () => (
     <div className="w-[180px] bg-zinc-900/60 rounded-md p-4 flex flex-col shrink-0 animate-pulse border border-zinc-800">
