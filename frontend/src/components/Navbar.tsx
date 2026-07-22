@@ -6,6 +6,13 @@ import { FiLogOut } from 'react-icons/fi';
 import { MdOutlineDashboard } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
 
+/**
+ * Navbar Component
+ * The central navigation header bar. Contains navigation controls (back/forward history),
+ * the dynamic search input (active on search route), and user account profile dropdown/auth state buttons.
+ *
+ * @returns {React.ReactElement} The rendered Navbar component.
+ */
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
