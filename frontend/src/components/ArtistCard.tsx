@@ -3,10 +3,22 @@ import { Link } from 'react-router-dom';
 import type { Artist } from '../types';
 import { RiPlayFill } from 'react-icons/ri';
 
+/**
+ * @interface ArtistCardProps
+ * @property {Artist} artist - The artist object containing details like ID, name, and avatar image.
+ */
 interface ArtistCardProps {
   artist: Artist;
 }
 
+/**
+ * ArtistCard Component
+ * Displays an artist's avatar image (circular format) and name, linking to the artist profile details page.
+ * Shows a hover play button overlay.
+ *
+ * @param {ArtistCardProps} props - Component properties.
+ * @returns {React.ReactElement} The rendered ArtistCard component.
+ */
 const ArtistCard: React.FC<ArtistCardProps> = ({ artist }) => {
   return (
     <Link
