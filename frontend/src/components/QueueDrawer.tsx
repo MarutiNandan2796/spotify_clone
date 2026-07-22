@@ -2,11 +2,24 @@ import React from 'react';
 import { X, Trash2, ArrowUp, ArrowDown, ListMusic, Play, Volume2 } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
 
+/**
+ * @interface QueueDrawerProps
+ * @property {boolean} isOpen - Determines if the queue sidebar drawer is visible.
+ * @property {() => void} onClose - Callback function to close the drawer.
+ */
 interface QueueDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+/**
+ * QueueDrawer Component
+ * Slides in from the right to display the current audio play queue.
+ * Allows re-ordering tracks (move up/down), removing tracks, and clearing the entire queue.
+ *
+ * @param {QueueDrawerProps} props - Component properties.
+ * @returns {React.ReactElement | null} The rendered QueueDrawer component, or null if hidden.
+ */
 export const QueueDrawer: React.FC<QueueDrawerProps> = ({ isOpen, onClose }) => {
   const { currentSong, queue, playSong, removeFromQueue, clearQueue, setQueueList, isPlaying } = usePlayer();
 
