@@ -5,11 +5,24 @@ import { ShareModal } from './ShareModal';
 import { Share2 } from 'lucide-react';
 import { RiPlayFill, RiPauseFill } from 'react-icons/ri';
 
+/**
+ * @interface SongCardProps
+ * @property {Song} song - The song data object to display.
+ * @property {Song[]} [playlistContext] - The list of songs providing playback context (e.g. current playlist/album).
+ */
 interface SongCardProps {
   song: Song;
   playlistContext?: Song[];
 }
 
+/**
+ * SongCard Component
+ * Displays song cover image, title, artist, and handles playback controls (play, pause, resume)
+ * and triggering the sharing modal.
+ *
+ * @param {SongCardProps} props - Component properties.
+ * @returns {React.ReactElement} The rendered SongCard component.
+ */
 const SongCard: React.FC<SongCardProps> = ({ song, playlistContext = [] }) => {
   const { currentSong, isPlaying, playSong, pauseSong, resumeSong } = usePlayer();
   const [showShare, setShowShare] = React.useState(false);
