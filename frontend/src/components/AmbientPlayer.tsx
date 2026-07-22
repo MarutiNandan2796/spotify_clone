@@ -2,11 +2,25 @@ import React from 'react';
 import { Minimize2, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Heart, Music2 } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
 
+/**
+ * @interface AmbientPlayerProps
+ * @property {boolean} isOpen - Determines whether the fullscreen ambient player view is open.
+ * @property {() => void} onClose - Callback function to close the ambient player view.
+ */
 interface AmbientPlayerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+/**
+ * AmbientPlayer Component
+ * Renders a premium, immersive full-screen audio player dashboard.
+ * Includes dynamic glowing backdrop color aura rings, large cover art, track progress scrub controls,
+ * and playback action triggers (play, pause, next, previous, repeat, shuffle).
+ *
+ * @param {AmbientPlayerProps} props - Component properties.
+ * @returns {React.ReactElement | null} The rendered AmbientPlayer component, or null if hidden.
+ */
 export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose }) => {
   const {
     currentSong,
