@@ -3,10 +3,22 @@ import { Link } from 'react-router-dom';
 import type { Album } from '../types';
 import { RiPlayFill } from 'react-icons/ri';
 
+/**
+ * @interface AlbumCardProps
+ * @property {Album} album - The album object containing details like ID, title, artist reference, and cover image.
+ */
 interface AlbumCardProps {
   album: Album;
 }
 
+/**
+ * AlbumCard Component
+ * Displays an album's cover image, title, release date, and artist, linking to the album details view.
+ * Shows a hover play button overlay.
+ *
+ * @param {AlbumCardProps} props - Component properties.
+ * @returns {React.ReactElement} The rendered AlbumCard component.
+ */
 const AlbumCard: React.FC<AlbumCardProps> = ({ album }) => {
   const artistName = typeof album.artist === 'object' ? album.artist.name : 'Various Artists';
 
