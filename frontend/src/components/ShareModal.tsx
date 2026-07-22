@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { Share2, X, Copy, Check, ExternalLink, QrCode } from 'lucide-react';
 
+/**
+ * @interface ShareModalProps
+ * @property {boolean} isOpen - Determines whether the modal is visible.
+ * @property {() => void} onClose - Callback function to close the modal.
+ * @property {string} title - The title of the content being shared (e.g. song title or playlist name).
+ * @property {string} [subtitle] - Optional subtitle (e.g. artist name).
+ * @property {string} [coverImage] - Optional URL of the cover image.
+ * @property {'track' | 'playlist' | 'album' | 'artist'} [type] - The type of content being shared. Defaults to 'track'.
+ */
 interface ShareModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,6 +19,13 @@ interface ShareModalProps {
   type?: 'track' | 'playlist' | 'album' | 'artist';
 }
 
+/**
+ * ShareModal Component
+ * Renders an overlay modal presenting options to copy the current page link or share to popular social platforms.
+ *
+ * @param {ShareModalProps} props - Component properties.
+ * @returns {React.ReactElement | null} The rendered ShareModal component, or null if hidden.
+ */
 export const ShareModal: React.FC<ShareModalProps> = ({
   isOpen,
   onClose,
