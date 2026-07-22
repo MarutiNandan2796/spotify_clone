@@ -3,10 +3,22 @@ import { Link } from 'react-router-dom';
 import type { Playlist } from '../types';
 import { RiPlayFill } from 'react-icons/ri';
 
+/**
+ * @interface PlaylistCardProps
+ * @property {Playlist} playlist - The playlist object containing details like ID, name, creator, and cover image.
+ */
 interface PlaylistCardProps {
   playlist: Playlist;
 }
 
+/**
+ * PlaylistCard Component
+ * Displays a playlist's cover art, name, and creator, linking to the playlist details view.
+ * Shows a hover play button overlay.
+ *
+ * @param {PlaylistCardProps} props - Component properties.
+ * @returns {React.ReactElement} The rendered PlaylistCard component.
+ */
 const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
   return (
     <Link
