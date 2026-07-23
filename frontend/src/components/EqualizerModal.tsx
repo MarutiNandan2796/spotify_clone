@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Sliders, X, Volume2, Sparkles, Check } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
 
@@ -9,23 +9,100 @@ const PRESETS = [
   { id: 'treble-boost', name: 'Treble Boost', values: [0, 0, 1, 4, 6] },
   { id: 'acoustic', name: 'Acoustic', values: [3, 2, 1, 2, 4] },
   { id: 'electronic', name: 'Electronic', values: [5, 3, 0, 2, 5] },
+  { id: 'custom', name: 'Custom', values: [0, 0, 0, 0, 0] },
 ];
 
 const BANDS = ['60Hz', '230Hz', '910Hz', '3.6kHz', '14kHz'];
 
 /**
  * EqualizerModal Component
- * Renders an overlay modal displaying equalizer bands and predefined presets (Flat, Bass Boost, Vocal Boost, Acoustic, etc.).
- * Includes a simulated realtime audio frequency visualizer spectrum.
+ * Renders an overlay modal displaying equalizer bands and predefined presets.
+ * Renders a real-time responsive Web Audio frequency visualizer on a canvas.
  *
  * @returns {React.ReactElement | null} The rendered EqualizerModal component, or null if hidden.
  */
 export const EqualizerModal: React.FC = () => {
-  const { showEqualizer, toggleEqualizer, equalizerPreset, setEqualizerPreset, isPlaying } = usePlayer();
+  const {
+    showEqualizer,
+    toggleEqualizer,
+    equalizerPreset,
+    setEqualizerPreset,
+    isPlaying,
+    analyserNode,
+    equalizerGains,
+    adjustEqualizerBand,
+  } = usePlayer();
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    if (!showEqualizer || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationId: number;
+    // Set frequency resolution to match analyser
+    const bufferLength = analyserNode ? analyserNode.frequencyBinCount : 64;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const renderFrame = () => {
+      animationId = requestAnimationFrame(renderFrame);
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      // Dark theme background clear with path trails
+      ctx.fillStyle = 'rgba(9, 9, 11, 0.3)';
+      ctx.fillRect(0, 0, width, height);
+
+      if (analyserNode && isPlaying) {
+        analyserNode.getByteFrequencyData(dataArray);
+
+        const barWidth = (width / bufferLength) * 1.5;
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          // Emphasize the lower-mid frequencies for better visual balance
+          const percent = dataArray[i] / 255;
+          barHeight = percent * height * 0.85;
+
+          const gradient = ctx.createLinearGradient(0, height, 0, height - barHeight);
+          gradient.addColorStop(0, 'rgba(34, 197, 94, 0.1)'); // low green
+          gradient.addColorStop(0.6, 'rgba(34, 197, 94, 0.7)'); // green-500
+          gradient.addColorStop(1, 'rgba(110, 231, 183, 1)'); // emerald-300
+
+          ctx.fillStyle = gradient;
+          ctx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
+
+          x += barWidth;
+        }
+      } else {
+        // Visualizer idle animation (sinusoidal pulse)
+        ctx.strokeStyle = 'rgba(34, 197, 94, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, height / 2);
+
+        const time = Date.now() * 0.003;
+        for (let x = 0; x < width; x++) {
+          const y = height / 2 + Math.sin(x * 0.02 + time) * 4;
+          ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    };
+
+    renderFrame();
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
+  }, [showEqualizer, analyserNode, isPlaying]);
 
   if (!showEqualizer) return null;
-
-  const currentPreset = PRESETS.find((p) => p.id === equalizerPreset) || PRESETS[1];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-fadeIn">
@@ -49,29 +126,18 @@ export const EqualizerModal: React.FC = () => {
           </button>
         </div>
 
-        {/* Live Frequency Visualizer Spectrum */}
-        <div className="my-6 p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/60 flex items-end justify-between gap-1.5 h-28 overflow-hidden relative">
-          <div className="absolute top-2 left-3 flex items-center gap-1.5 text-[10px] font-mono text-zinc-500">
-            <Volume2 className="w-3 h-3 text-green-400 animate-pulse" />
+        {/* Realtime Audio Spectrum Canvas */}
+        <div className="my-6 rounded-xl bg-zinc-950/85 border border-zinc-800/60 flex items-end h-28 overflow-hidden relative">
+          <div className="absolute top-2 left-3 flex items-center gap-1.5 text-[10px] font-mono text-zinc-500 z-10">
+            <Volume2 className="w-3 h-3 text-green-400" />
             <span>REALTIME AUDIO SPECTRUM</span>
           </div>
-
-          {[...Array(24)].map((_, i) => {
-            const presetBoost = currentPreset.values[i % 5] || 0;
-            const baseHeight = 35 + presetBoost * 6;
-            const animDuration = 0.6 + (i % 4) * 0.2;
-            return (
-              <div
-                key={i}
-                className="flex-1 bg-gradient-to-t from-green-500/30 via-green-400 to-emerald-300 rounded-t transition-all duration-300"
-                style={{
-                  height: isPlaying ? `${Math.min(95, Math.max(15, baseHeight + Math.random() * 20))}%` : `${Math.max(10, baseHeight)}%`,
-                  opacity: isPlaying ? 0.9 : 0.4,
-                  animationDuration: `${animDuration}s`,
-                }}
-              />
-            );
-          })}
+          <canvas
+            ref={canvasRef}
+            width={464}
+            height={112}
+            className="w-full h-full"
+          />
         </div>
 
         {/* Presets List */}
@@ -80,21 +146,21 @@ export const EqualizerModal: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5 text-green-400" />
             Sound Presets
           </label>
-          <div className="grid grid-cols-3 gap-2 mt-2">
+          <div className="grid grid-cols-4 gap-2 mt-2">
             {PRESETS.map((preset) => {
               const active = preset.id === equalizerPreset;
               return (
                 <button
                   key={preset.id}
                   onClick={() => setEqualizerPreset(preset.id)}
-                  className={`px-3 py-2 rounded-xl text-xs font-medium border text-left transition-all flex items-center justify-between ${
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-medium border text-left transition-all flex items-center justify-between ${
                     active
                       ? 'bg-green-500/15 border-green-500/50 text-green-400 shadow-sm'
                       : 'bg-zinc-800/50 border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white'
                   }`}
                 >
-                  <span>{preset.name}</span>
-                  {active && <Check className="w-3.5 h-3.5 text-green-400" />}
+                  <span className="truncate">{preset.name}</span>
+                  {active && <Check className="w-3 h-3 text-green-400 shrink-0 ml-1" />}
                 </button>
               );
             })}
@@ -104,17 +170,20 @@ export const EqualizerModal: React.FC = () => {
         {/* Frequency Sliders */}
         <div className="grid grid-cols-5 gap-3 pt-2 border-t border-zinc-800/60 text-center">
           {BANDS.map((band, idx) => {
-            const dbVal = currentPreset.values[idx];
+            const dbVal = equalizerGains[idx] ?? 0;
             return (
               <div key={band} className="flex flex-col items-center gap-2">
-                <span className="text-[11px] font-mono text-zinc-400">{dbVal > 0 ? `+${dbVal}` : dbVal}dB</span>
+                <span className="text-[11px] font-mono text-zinc-400 w-12 text-center">
+                  {dbVal > 0 ? `+${dbVal}` : dbVal}dB
+                </span>
                 <div className="h-24 flex items-center justify-center">
                   <input
                     type="range"
                     min="-12"
                     max="12"
+                    step="1"
                     value={dbVal}
-                    readOnly
+                    onChange={(e) => adjustEqualizerBand(idx, parseInt(e.target.value, 10))}
                     className="h-20 w-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-green-400 [writing-mode:vertical-lr] [direction:rtl]"
                   />
                 </div>
