@@ -40,6 +40,9 @@ interface PlayerContextType {
   clearQueue: () => void;
   setQueueList: (songs: Song[]) => void;
   toggleLyrics: () => void;
+  analyserNode: AnalyserNode | null;
+  equalizerGains: number[];
+  adjustEqualizerBand: (bandIndex: number, dbGain: number) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -68,6 +71,20 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [sleepTimerTimeLeft, setSleepTimerTimeLeft] = useState<number | null>(null);
   const [showSleepModal, setShowSleepModal] = useState(false);
 
+  // Web Audio API refs and state
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const filtersRef = useRef<BiquadFilterNode[]>([]);
+  const analyserNodeRef = useRef<AnalyserNode | null>(null);
+  const [equalizerGains, setEqualizerGains] = useState<number[]>([6, 4, 1, 0, 0]); // defaults to bass-boost
+  const [bypassWebAudio, setBypassWebAudioState] = useState(false);
+  const bypassWebAudioRef = useRef(false);
+
+  const setBypassWebAudio = (val: boolean) => {
+    setBypassWebAudioState(val);
+    bypassWebAudioRef.current = val;
+  };
+
   const toggleSleepModal = () => {
     setShowSleepModal((prev) => !prev);
   };
@@ -79,6 +96,104 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setSleepTimerTimeLeft(minutes * 60);
     }
   };
+
+  const initAudioPipeline = () => {
+    if (audioContextRef.current || bypassWebAudioRef.current) return;
+    if (!audioRef.current) return;
+
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContextClass();
+      audioContextRef.current = ctx;
+
+      const source = ctx.createMediaElementSource(audioRef.current);
+      sourceNodeRef.current = source;
+
+      // 60Hz, 230Hz, 910Hz, 3.6kHz, 14kHz
+      const freqs = [60, 230, 910, 3600, 14000];
+      const filters = freqs.map((freq) => {
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'peaking';
+        filter.frequency.value = freq;
+        filter.Q.value = 1.0;
+        filter.gain.value = 0;
+        return filter;
+      });
+      filtersRef.current = filters;
+
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      analyserNodeRef.current = analyser;
+
+      // Connect source -> filters -> analyser -> destination
+      let lastNode: AudioNode = source;
+      filters.forEach((filter) => {
+        lastNode.connect(filter);
+        lastNode = filter;
+      });
+      lastNode.connect(analyser);
+      analyser.connect(ctx.destination);
+
+      applyGainsToFilters(equalizerGains);
+    } catch (err) {
+      console.warn('Failed to initialize Web Audio API pipeline:', err);
+    }
+  };
+
+  const resumeAudioContext = async () => {
+    if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+      try {
+        await audioContextRef.current.resume();
+      } catch (err) {
+        console.error('Failed to resume AudioContext:', err);
+      }
+    }
+  };
+
+  const applyGainsToFilters = (gains: number[]) => {
+    if (filtersRef.current.length === 5) {
+      filtersRef.current.forEach((filter, index) => {
+        const val = gains[index];
+        if (typeof val === 'number') {
+          if (audioContextRef.current) {
+            filter.gain.setTargetAtTime(val, audioContextRef.current.currentTime, 0.01);
+          } else {
+            filter.gain.value = val;
+          }
+        }
+      });
+    }
+  };
+
+  const adjustEqualizerBand = (bandIndex: number, dbGain: number) => {
+    setEqualizerPreset('custom');
+    setEqualizerGains((prev) => {
+      const next = [...prev];
+      next[bandIndex] = dbGain;
+      applyGainsToFilters(next);
+      return next;
+    });
+  };
+
+  // Sync presets from Equalizer Modal presets to filter gains
+  useEffect(() => {
+    const PRESETS_MAP: Record<string, number[]> = {
+      flat: [0, 0, 0, 0, 0],
+      'bass-boost': [6, 4, 1, 0, 0],
+      'vocal-boost': [-2, 0, 5, 3, 0],
+      'treble-boost': [0, 0, 1, 4, 6],
+      acoustic: [3, 2, 1, 2, 4],
+      electronic: [5, 3, 0, 2, 5],
+    };
+
+    if (equalizerPreset !== 'custom') {
+      const presetValues = PRESETS_MAP[equalizerPreset];
+      if (presetValues) {
+        setEqualizerGains(presetValues);
+        applyGainsToFilters(presetValues);
+      }
+    }
+  }, [equalizerPreset]);
 
   // Sleep Timer Countdown Effect
   useEffect(() => {
@@ -129,9 +244,27 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       handleSongEnded();
     };
 
+    const onError = () => {
+      if (audio.crossOrigin === 'anonymous') {
+        console.warn('CORS restriction triggered. Bypassing Web Audio pipeline and playing directly.');
+        setBypassWebAudio(true);
+        
+        audio.removeAttribute('crossOrigin');
+        audio.load();
+        audio.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((err) => {
+            console.error('Playback recovery failed', err);
+          });
+      }
+    };
+
     audio.addEventListener('timeupdate', onTimeUpdate);
     audio.addEventListener('loadedmetadata', onLoadedMetadata);
     audio.addEventListener('ended', onEnded);
+    audio.addEventListener('error', onError);
 
     // Set initial volume
     audio.volume = volume;
@@ -140,6 +273,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       audio.removeEventListener('timeupdate', onTimeUpdate);
       audio.removeEventListener('loadedmetadata', onLoadedMetadata);
       audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('error', onError);
       audio.pause();
     };
   }, []);
@@ -165,8 +299,16 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!audioRef.current) return;
 
     setCurrentSong(song);
+
+    // Try CORS-safe playback for each new song
+    setBypassWebAudio(false);
+    audioRef.current.crossOrigin = 'anonymous';
     audioRef.current.src = song.audioUrl;
     audioRef.current.playbackRate = playbackRate;
+
+    initAudioPipeline();
+    resumeAudioContext();
+
     audioRef.current.play()
       .then(() => {
         setIsPlaying(true);
@@ -213,6 +355,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const resumeSong = () => {
     if (audioRef.current && currentSong) {
+      resumeAudioContext();
       audioRef.current.play()
         .then(() => setIsPlaying(true))
         .catch((err) => console.error('Resume failed', err));
@@ -408,12 +551,15 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         clearQueue,
         setQueueList,
         toggleLyrics,
+        analyserNode: analyserNodeRef.current,
+        equalizerGains,
+        adjustEqualizerBand,
       }}
     >
       {children}
     </PlayerContext.Provider>
   );
-};
+}
 
 export const usePlayer = () => {
   const context = useContext(PlayerContext);
