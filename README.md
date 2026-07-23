@@ -28,9 +28,9 @@ A production-quality music streaming web application styled with glassmorphism a
 
 ## ⭐ Key Features
 
-- **Audio Equalizer & Frequency Spectrum**: Custom frequency band adjustment modal with live spectrum visualizer bars and 6 acoustic presets (Bass Boost, Vocal Boost, Treble Boost, Acoustic, Electronic, Flat).
+- **Web Audio API Equalizer & Canvas Visualizer**: Fully interactive 5-band peaking equalizer filter bank (60Hz, 230Hz, 910Hz, 3.6kHz, 14kHz) with real-time responsive HTML5 Canvas spectrum visualizer.
 - **Interactive Queue Drawer**: Slide-over queue drawer displaying current playing track, upcoming items, move up/down track reordering, and instant queue clearing.
-- **Full-Screen Ambient Cinema View**: Dynamic backdrop glow mode featuring glassmorphism visuals, ambient aura, album art spin, and prominent playback controls.
+- **Full-Screen Ambient Cinema View**: Dynamic backdrop glow mode featuring glassmorphism visuals, ambient aura, a slow-spinning vinyl record, and a circular audio-reactive waveform visualizer that pulses dynamically to the bass frequency of the song.
 - **Variable Playback Speed**: Precise speed controller (0.5x, 0.75x, 1.0x, 1.25x, 1.5x, 2.0x) for audio playback.
 - **Sleep Timer Utility**: Countdown auto-pause timer (5m, 15m, 30m, 45m, 60m) to automatically stop playback when resting.
 - **Recent Search History & Genre Chips**: Persistent search query chips with quick removal and instant filter pills for Pop, Hip-Hop, Rock, Electronic, Indie, and Chill genres.
