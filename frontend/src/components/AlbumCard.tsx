@@ -37,7 +37,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({ album }) => {
         />
 
         {/* Play Overlay */}
-        <div className="absolute bottom-2 right-2 w-10 h-10 bg-spotify-green hover:bg-spotify-hoverGreen text-black rounded-full flex items-center justify-center shadow-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 active:scale-95 hover:scale-105">
+        <div className="absolute bottom-2 right-2 w-10 h-10 bg-gradient-to-tr from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-full flex items-center justify-center shadow-[0_4px_15px_rgba(139,92,246,0.4)] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 active:scale-95 hover:scale-105">
           <RiPlayFill className="w-5 h-5 ml-0.5" />
         </div>
       </div>

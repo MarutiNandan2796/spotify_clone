@@ -94,45 +94,45 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
           centerX, centerY, baseRadius - 10,
           centerX, centerY, baseRadius + 70 + bassIntensity * 40
         );
-        radGlow.addColorStop(0, 'rgba(34, 197, 94, 0.04)');
-        radGlow.addColorStop(0.5, 'rgba(34, 197, 94, 0.12)');
+        radGlow.addColorStop(0, 'rgba(139, 92, 246, 0.04)');
+        radGlow.addColorStop(0.5, 'rgba(139, 92, 246, 0.12)');
         radGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = radGlow;
         ctx.beginPath();
         ctx.arc(centerX, centerY, baseRadius + 110, 0, Math.PI * 2);
         ctx.fill();
-
+ 
         // 2. Draw audio-reactive radiating lines / bars
         const numBars = 100;
         for (let i = 0; i < numBars; i++) {
           const dataIndex = Math.floor((i < numBars / 2 ? i : numBars - i) * (bufferLength / (numBars / 2)));
           const value = dataArray[dataIndex] || 0;
           const percent = value / 255;
-
+ 
           const angle = (i * Math.PI * 2) / numBars;
           const minLength = 3;
           const maxLength = 50 + bassIntensity * 25;
           const barLength = minLength + percent * maxLength;
-
+ 
           // Start point on the circle edge
           const startX = centerX + Math.cos(angle) * baseRadius;
           const startY = centerY + Math.sin(angle) * baseRadius;
-
+ 
           // End point expanding outwards
           const endX = centerX + Math.cos(angle) * (baseRadius + barLength);
           const endY = centerY + Math.sin(angle) * (baseRadius + barLength);
-
+ 
           // Draw visualizer bar
-          ctx.strokeStyle = `rgba(34, 197, 94, ${0.35 + percent * 0.65})`;
+          ctx.strokeStyle = `rgba(6, 182, 212, ${0.4 + percent * 0.6})`; // Neon Cyan
           ctx.lineWidth = 2 + percent * 2;
           ctx.beginPath();
           ctx.moveTo(startX, startY);
           ctx.lineTo(endX, endY);
           ctx.stroke();
         }
-
+ 
         // 3. Draw a smooth wave overlay ring
-        ctx.strokeStyle = 'rgba(110, 231, 183, 0.65)';
+        ctx.strokeStyle = 'rgba(236, 72, 153, 0.75)'; // Neon Pink
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         for (let i = 0; i <= numBars; i++) {
@@ -141,10 +141,10 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
           const percent = value / 255;
           const angle = (i * Math.PI * 2) / numBars;
           const radius = baseRadius + percent * (35 + bassIntensity * 15);
-
+ 
           const x = centerX + Math.cos(angle) * radius;
           const y = centerY + Math.sin(angle) * radius;
-
+ 
           if (i === 0) {
             ctx.moveTo(x, y);
           } else {
@@ -153,19 +153,19 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
         }
         ctx.closePath();
         ctx.stroke();
-
+ 
       } else {
         // Idle state: Slowly pulsating rings
         const time = Date.now() * 0.001;
         const pulseRadius = baseRadius + Math.sin(time * 2) * 3;
-
-        ctx.strokeStyle = 'rgba(34, 197, 94, 0.15)';
+ 
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.18)'; // Violet
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2);
         ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(34, 197, 94, 0.06)';
+ 
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)'; // Cyan
         ctx.beginPath();
         ctx.arc(centerX, centerY, pulseRadius + 15 + Math.sin(time) * 5, 0, Math.PI * 2);
         ctx.stroke();
@@ -182,22 +182,22 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
   if (!isOpen || !currentSong) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex flex-col justify-between p-8 text-white animate-fadeIn overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-[#05030b]/98 backdrop-blur-3xl flex flex-col justify-between p-8 text-white animate-fadeIn overflow-hidden">
       {/* Dynamic Background Glowing Auras */}
-      <div className="absolute inset-0 pointer-events-none opacity-40">
+      <div className="absolute inset-0 pointer-events-none opacity-30">
         <div
           className="absolute -top-1/4 -left-1/4 w-[800px] h-[800px] rounded-full blur-[140px] animate-pulse"
-          style={{ backgroundColor: '#1db954' }}
+          style={{ backgroundColor: '#8b5cf6' }}
         />
         <div
           className="absolute -bottom-1/4 -right-1/4 w-[800px] h-[800px] rounded-full blur-[140px] animate-pulse"
-          style={{ backgroundColor: '#3b82f6', animationDelay: '1s' }}
+          style={{ backgroundColor: '#06b6d4', animationDelay: '1s' }}
         />
       </div>
 
       {/* Top Bar */}
       <div className="relative z-10 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-green-400 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-violet-400 bg-violet-500/10 border border-violet-500/20 px-3 py-1.5 rounded-full">
           <Music2 className="w-3.5 h-3.5" />
           <span>Ambient Cinema Mode</span>
         </div>
@@ -207,7 +207,7 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
             onClick={() => setShowVisualizer(!showVisualizer)}
             className={`p-3 rounded-full border transition-all shadow-lg ${
               showVisualizer
-                ? 'bg-green-500/15 border-green-500/30 text-green-400'
+                ? 'bg-violet-500/15 border-violet-500/30 text-violet-400'
                 : 'bg-zinc-900/80 hover:bg-zinc-800 border-zinc-800 text-zinc-400 hover:text-white'
             }`}
             title={showVisualizer ? "Hide Audio Visualizer" : "Show Audio Visualizer"}
@@ -279,7 +279,7 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
             max={duration || 0}
             value={currentTime}
             onChange={(e) => seek(parseFloat(e.target.value))}
-            className="w-full accent-green-400 h-1.5 bg-zinc-850 rounded-lg appearance-none cursor-pointer hover:bg-zinc-700 transition-all"
+            className="w-full accent-violet-500 h-1.5 bg-zinc-850 rounded-lg appearance-none cursor-pointer hover:bg-zinc-700 transition-all"
           />
           <div className="flex justify-between text-xs font-mono text-zinc-400 font-medium">
             <span>{formatTime(currentTime)}</span>
@@ -292,7 +292,7 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
           <button
             onClick={toggleShuffle}
             className={`p-3 rounded-full transition-all ${
-              shuffle ? 'text-green-400 bg-green-500/10' : 'text-zinc-400 hover:text-white'
+              shuffle ? 'text-violet-400 bg-violet-500/10' : 'text-zinc-400 hover:text-white'
             }`}
           >
             <Shuffle className="w-5 h-5" />
@@ -304,7 +304,7 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
 
           <button
             onClick={togglePlay}
-            className="p-5 rounded-full bg-green-500 hover:bg-green-400 text-black shadow-xl hover:scale-105 active:scale-95 transition-all"
+            className="p-5 rounded-full bg-violet-500 hover:bg-violet-400 text-white shadow-xl hover:scale-105 active:scale-95 transition-all"
           >
             {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current ml-1" />}
           </button>
@@ -316,7 +316,7 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
           <button
             onClick={toggleRepeat}
             className={`p-3 rounded-full transition-all ${
-              repeatMode !== 'off' ? 'text-green-400 bg-green-500/10' : 'text-zinc-400 hover:text-white'
+              repeatMode !== 'off' ? 'text-violet-400 bg-violet-500/10' : 'text-zinc-400 hover:text-white'
             }`}
           >
             <Repeat className="w-5 h-5" />

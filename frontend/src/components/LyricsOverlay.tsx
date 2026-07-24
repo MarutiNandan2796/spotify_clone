@@ -112,7 +112,7 @@ const LyricsOverlay: React.FC = () => {
                   onClick={() => seek(line.time)}
                   className={`text-xl md:text-3xl font-extrabold cursor-pointer transition-all duration-300 py-2 text-left w-full rounded px-4 -mx-4 hover:bg-white/5 ${
                     isActive
-                      ? 'text-spotify-green scale-[1.02] origin-left drop-shadow-[0_0_15px_rgba(29,185,84,0.3)] opacity-100'
+                      ? 'text-violet-400 scale-[1.02] origin-left drop-shadow-[0_0_15px_rgba(139,92,246,0.3)] opacity-100'
                       : 'text-white/40 hover:text-white/80 opacity-60'
                   }`}
                 >

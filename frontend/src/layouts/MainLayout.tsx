@@ -7,16 +7,23 @@ import LyricsOverlay from '../components/LyricsOverlay';
 
 const MainLayout: React.FC = () => {
   return (
-    <div className="flex flex-col h-screen w-screen bg-spotify-black text-white overflow-hidden select-none">
+    <div className="flex flex-col h-screen w-screen bg-spotify-black text-white overflow-hidden select-none relative">
+      {/* Glowing background auroras */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="aura-blob blob-1"></div>
+        <div className="aura-blob blob-2"></div>
+        <div className="aura-blob blob-3"></div>
+      </div>
+
       {/* Upper Main Shell */}
-      <div className="flex flex-1 overflow-hidden p-2 gap-2 h-[calc(100vh-90px)]">
+      <div className="flex flex-1 overflow-hidden p-3 gap-3 h-[calc(100vh-100px)] z-10">
         {/* Left Sidebar - Hidden on mobile, shown on md+ */}
-        <div className="hidden md:flex w-[280px] flex-col shrink-0">
+        <div className="hidden md:flex w-[300px] flex-col shrink-0">
           <Sidebar />
         </div>
 
         {/* Center Main Scrollable Panel */}
-        <div className="flex-1 flex flex-col rounded-lg bg-spotify-dark overflow-hidden relative">
+        <div className="flex-1 flex flex-col rounded-2xl glass-panel overflow-hidden relative">
           <Navbar />
           <div className="flex-1 overflow-y-auto overflow-x-hidden relative spotify-gradient-bg">
             <Outlet />
@@ -25,8 +32,8 @@ const MainLayout: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Sticky Audio Player */}
-      <div className="h-[90px] w-full bg-spotify-black border-t border-zinc-900 px-4 flex items-center">
+      {/* Bottom Floating Audio Player */}
+      <div className="h-[100px] w-full bg-transparent px-6 flex items-center justify-center z-10">
         <Player />
       </div>
 

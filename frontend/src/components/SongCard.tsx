@@ -72,21 +72,21 @@ const SongCard: React.FC<SongCardProps> = ({ song, playlistContext = [] }) => {
         {/* Floating Play/Pause Button */}
         <button
           onClick={handlePlayClick}
-          className="absolute bottom-2 right-2 w-11 h-11 bg-spotify-green hover:bg-spotify-hoverGreen text-black rounded-full flex items-center justify-center shadow-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 active:scale-95 text-glow hover:scale-105"
+          className="absolute bottom-2 right-2 w-10 h-10 bg-gradient-to-tr from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-full flex items-center justify-center shadow-[0_4px_15px_rgba(139,92,246,0.4)] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 active:scale-95 hover:scale-105"
         >
           {isCurrent && isPlaying ? (
-            <RiPauseFill className="w-6 h-6" />
+            <RiPauseFill className="w-5.5 h-5.5" />
           ) : (
-            <RiPlayFill className="w-6 h-6 ml-0.5" />
+            <RiPlayFill className="w-5.5 h-5.5 ml-0.5" />
           )}
         </button>
       </div>
-
+ 
       {/* Metadata */}
       <div className="flex flex-col text-left">
         <span
           className={`font-bold text-sm truncate mb-1 leading-tight ${
-            isCurrent ? 'text-spotify-green' : 'text-white'
+            isCurrent ? 'text-violet-400 drop-shadow-[0_0_10px_rgba(139,92,246,0.3)]' : 'text-white'
           }`}
           title={song.title}
         >

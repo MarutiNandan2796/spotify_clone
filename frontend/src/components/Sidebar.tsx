@@ -62,48 +62,50 @@ const Sidebar: React.FC = () => {
   return (
     <div className="flex flex-col gap-2 h-full w-full">
       {/* Home / Search Panel */}
-      <div className="bg-spotify-black rounded-lg p-4 flex flex-col gap-4">
-        <Link to="/" className="flex items-center gap-2 mb-2 px-1">
-          <svg viewBox="0 0 24 24" className="w-8 h-8 text-spotify-green" fill="currentColor">
-            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.892-.982-.336.076-.67-.138-.746-.473-.076-.336.138-.67.473-.746 3.854-.88 7.15-.504 9.822 1.13.295.18.387.563.207.864zm1.225-2.72c-.227.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.082-1.182-.413.125-.847-.11-972-.522-.125-.412.11-.847.522-.972 3.676-1.114 8.24-.57 11.35 1.344.366.226.486.707.26 1.074zm.107-2.836C14.394 8.71 8.683 8.52 5.355 9.53c-.512.155-1.046-.134-1.202-.647-.155-.513.134-1.047.647-1.202 3.82-1.16 10.122-.94 14.168 1.464.46.273.61.87.337 1.33-.273.46-.87.61-1.33.337z"/>
-          </svg>
-          <span className="font-bold text-xl tracking-tight">Spotify</span>
+      <div className="glass-panel rounded-2xl p-5 flex flex-col gap-4 shadow-xl">
+        <Link to="/" className="flex items-center gap-3 mb-2 px-1 group">
+          <div className="p-2 bg-gradient-to-tr from-violet-600 to-fuchsia-600 rounded-xl shadow-[0_0_15px_rgba(139,92,246,0.4)] group-hover:scale-105 transition-transform duration-300">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M4 10v4M8 6v12M12 3v18M16 8v8M20 11v2" />
+            </svg>
+          </div>
+          <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">Aura Wave</span>
         </Link>
-
+ 
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `flex items-center gap-4 text-sm font-semibold transition-colors py-1.5 hover:text-white group ${
-              isActive ? 'text-white' : 'text-spotify-lightGray'
+            `flex items-center gap-4 text-sm font-semibold transition-all py-2 px-3 rounded-xl hover:bg-white/[0.04] hover:text-white group ${
+              isActive ? 'text-white bg-white/[0.04] border border-white/[0.05]' : 'text-spotify-lightGray'
             }`
           }
         >
           {({ isActive }) => (
             <>
               {isActive ? (
-                <RiHome5Fill className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+                <RiHome5Fill className="w-5 h-5 text-violet-400 group-hover:scale-110 transition-transform duration-200" />
               ) : (
-                <RiHome5Line className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+                <RiHome5Line className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
               )}
               <span>Home</span>
             </>
           )}
         </NavLink>
-
+ 
         <NavLink
           to="/search"
           className={({ isActive }) =>
-            `flex items-center gap-4 text-sm font-semibold transition-colors py-1.5 hover:text-white group ${
-              isActive ? 'text-white' : 'text-spotify-lightGray'
+            `flex items-center gap-4 text-sm font-semibold transition-all py-2 px-3 rounded-xl hover:bg-white/[0.04] hover:text-white group ${
+              isActive ? 'text-white bg-white/[0.04] border border-white/[0.05]' : 'text-spotify-lightGray'
             }`
           }
         >
           {({ isActive }) => (
             <>
               {isActive ? (
-                <RiSearchFill className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+                <RiSearchFill className="w-5 h-5 text-violet-400 group-hover:scale-110 transition-transform duration-200" />
               ) : (
-                <RiSearchLine className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+                <RiSearchLine className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
               )}
               <span>Search</span>
             </>
@@ -112,37 +114,37 @@ const Sidebar: React.FC = () => {
       </div>
 
       {/* Library Panel */}
-      <div className="flex-1 bg-spotify-black rounded-lg p-2 flex flex-col overflow-hidden">
+      <div className="flex-1 glass-panel rounded-2xl p-3 flex flex-col overflow-hidden shadow-xl mt-1">
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-2 text-spotify-lightGray">
           <div className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer">
-            <VscLibrary className="w-6 h-6" />
+            <VscLibrary className="w-5 h-5 text-violet-400" />
             <span className="text-sm font-bold">Your Library</span>
           </div>
           <button
             onClick={handleCreatePlaylist}
             disabled={loading}
-            className="hover:text-white hover:bg-zinc-800 p-1.5 rounded-full transition-all active:scale-95"
+            className="hover:text-white hover:bg-white/[0.05] p-2 rounded-xl transition-all active:scale-95 border border-transparent hover:border-white/[0.05]"
             title="Create Playlist"
           >
             <RiAddLine className="w-5 h-5" />
           </button>
         </div>
-
+ 
         {/* Liked Songs Shortcut */}
         <Link
           to="/liked-songs"
-          className="flex items-center gap-3 p-2 mx-1.5 rounded-md hover:bg-zinc-900 transition-colors group"
+          className="flex items-center gap-3 p-2.5 mx-1.5 rounded-xl hover:bg-white/[0.04] hover:border hover:border-white/[0.05] transition-all border border-transparent group"
         >
-          <div className="w-12 h-12 rounded bg-gradient-to-br from-indigo-700 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shrink-0 group-hover:opacity-90 transition-transform duration-200 group-hover:scale-105">
-            <RiHeartFill className="w-6 h-6 text-white animate-pulse" style={{ animationDuration: '3s' }} />
+          <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-violet-600 via-fuchsia-600 to-cyan-500 flex items-center justify-center shadow-lg shrink-0 group-hover:opacity-90 transition-transform duration-300 group-hover:scale-105">
+            <RiHeartFill className="w-5 h-5 text-white animate-pulse" style={{ animationDuration: '3s' }} />
           </div>
           <div className="flex flex-col overflow-hidden">
             <span className="text-sm font-semibold text-white truncate">Liked Songs</span>
             <span className="text-xs text-spotify-lightGray">Playlist</span>
           </div>
         </Link>
-
+ 
         {/* Playlists List Container */}
         <div className="flex-1 overflow-y-auto mt-2 px-1">
           {playlists.length === 0 ? (
@@ -156,20 +158,20 @@ const Sidebar: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               {playlists.map((playlist) => (
                 <Link
                   key={playlist._id}
                   to={`/playlist/${playlist._id}`}
-                  className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-900 transition-colors group"
+                  className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/[0.04] hover:border hover:border-white/[0.05] border border-transparent transition-all group"
                 >
                   <img
                     src={playlist.coverImage}
                     alt={playlist.name}
-                    className="w-12 h-12 rounded object-cover shadow shrink-0 transition-transform duration-200 group-hover:scale-105"
+                    className="w-11 h-11 rounded-lg object-cover shadow shrink-0 transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="flex flex-col overflow-hidden">
-                    <span className="text-sm font-semibold text-white truncate group-hover:text-spotify-green transition-colors">
+                    <span className="text-sm font-semibold text-white truncate group-hover:text-violet-400 transition-colors">
                       {playlist.name}
                     </span>
                     <span className="text-xs text-spotify-lightGray">

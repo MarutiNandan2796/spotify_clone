@@ -148,25 +148,34 @@ const Player: React.FC = () => {
 
   if (!currentSong) {
     return (
-      <div className="w-full flex items-center justify-between h-full text-zinc-500 text-sm italic font-medium px-4">
-        <span>No song selected. Select a track to start listening.</span>
+      <div className="w-full max-w-5xl h-[76px] px-8 rounded-full bg-zinc-950/45 backdrop-blur-xl border border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex items-center justify-center text-zinc-400 text-sm font-medium">
+        <span>Select a track to start listening to Aura Wave.</span>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex items-center justify-between h-full relative">
+    <div className="w-full max-w-6xl h-[78px] px-8 rounded-full bg-zinc-950/45 backdrop-blur-xl border border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex items-center justify-between relative hover:border-violet-500/25 hover:shadow-[0_12px_45px_rgba(139,92,246,0.06)] transition-all duration-500 select-none">
       {/* LEFT: Current Track Details */}
-      <div className="flex items-center gap-3 w-1/3 min-w-[180px]">
+      <div className="flex items-center gap-3 w-1/3 min-w-[200px]">
         <img
           src={currentSong.coverImage}
           alt={currentSong.title}
-          className="w-14 h-14 rounded object-cover shadow-md shrink-0 border border-zinc-800"
+          className="w-12 h-12 rounded-lg object-cover shadow-lg shrink-0 border border-white/5 group-hover:scale-105 transition-transform"
         />
         <div className="flex flex-col overflow-hidden leading-tight">
-          <span className="text-sm font-semibold text-white truncate hover:underline cursor-pointer">
-            {currentSong.title}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-white truncate hover:underline cursor-pointer">
+              {currentSong.title}
+            </span>
+            {isPlaying && (
+              <div className="eq-container shrink-0" title="Playing">
+                <div className="eq-bar"></div>
+                <div className="eq-bar"></div>
+                <div className="eq-bar"></div>
+              </div>
+            )}
+          </div>
           <span className="text-xs text-spotify-lightGray truncate hover:underline cursor-pointer hover:text-white">
             {currentSong.artist?.name || 'Unknown Artist'}
           </span>
@@ -178,22 +187,22 @@ const Player: React.FC = () => {
             title={isLiked ? "Remove from Liked Songs" : "Save to Liked Songs"}
           >
             {isLiked ? (
-              <RiHeartFill className="w-5 h-5 text-spotify-green hover:scale-105 transition-all" />
+              <RiHeartFill className="w-5 h-5 text-violet-400 hover:scale-110 transition-all" />
             ) : (
-              <RiHeartLine className="w-5 h-5 hover:scale-105 transition-all" />
+              <RiHeartLine className="w-5 h-5 hover:scale-110 transition-all" />
             )}
           </button>
         )}
       </div>
 
       {/* CENTER: Playback Controls */}
-      <div className="flex flex-col items-center gap-1.5 w-1/3 max-w-[500px]">
+      <div className="flex flex-col items-center gap-1.5 w-1/3 max-w-[460px]">
         {/* Buttons */}
         <div className="flex items-center gap-5 text-zinc-400">
           <button
             onClick={toggleShuffle}
             className={`hover:text-white transition-colors cursor-pointer ${
-              shuffle ? 'text-spotify-green hover:text-spotify-hoverGreen' : ''
+              shuffle ? 'text-violet-400 hover:text-violet-300' : ''
             }`}
             title="Shuffle"
           >
@@ -210,9 +219,9 @@ const Player: React.FC = () => {
             title={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
-              <RiPauseCircleFill className="w-10 h-10 text-white" />
+              <RiPauseCircleFill className="w-10 h-10 text-violet-500 drop-shadow-[0_0_10px_rgba(139,92,246,0.35)]" />
             ) : (
-              <RiPlayCircleFill className="w-10 h-10 text-white" />
+              <RiPlayCircleFill className="w-10 h-10 text-violet-500 drop-shadow-[0_0_10px_rgba(139,92,246,0.35)]" />
             )}
           </button>
 
@@ -223,13 +232,13 @@ const Player: React.FC = () => {
           <button
             onClick={toggleRepeat}
             className={`hover:text-white transition-colors relative cursor-pointer ${
-              repeatMode !== 'off' ? 'text-spotify-green hover:text-spotify-hoverGreen' : ''
+              repeatMode !== 'off' ? 'text-violet-400 hover:text-violet-300' : ''
             }`}
             title={`Repeat: ${repeatMode}`}
           >
             <RiRepeatLine className="w-5 h-5" />
             {repeatMode === 'one' && (
-              <span className="absolute -top-1 -right-1 text-[8px] bg-spotify-green text-black font-extrabold rounded-full px-0.5 leading-none">
+              <span className="absolute -top-1 -right-1 text-[8px] bg-violet-500 text-white font-extrabold rounded-full px-1 leading-none">
                 1
               </span>
             )}
@@ -237,7 +246,7 @@ const Player: React.FC = () => {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full flex items-center gap-2 text-[11px] text-spotify-lightGray">
+        <div className="w-full flex items-center gap-2 text-[10px] text-spotify-lightGray font-medium">
           <span>{formatTime(currentTime)}</span>
           <input
             type="range"
@@ -245,22 +254,22 @@ const Player: React.FC = () => {
             max={duration || 0}
             value={currentTime}
             onChange={(e) => seek(parseFloat(e.target.value))}
-            className="flex-1 accent-spotify-green h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer hover:accent-spotify-hoverGreen"
+            className="flex-1 accent-violet-500 h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer hover:accent-violet-400 transition-colors"
           />
           <span>{formatTime(duration)}</span>
         </div>
       </div>
 
       {/* RIGHT: Volume & Queue */}
-      <div className="flex items-center gap-3 w-1/3 justify-end relative">
+      <div className="flex items-center gap-3.5 w-1/3 justify-end relative">
         {/* Playback Speed selector */}
         <div className="relative">
           <button
             onClick={() => setShowSpeedMenu(!showSpeedMenu)}
-            className={`px-1.5 py-0.5 rounded text-[11px] font-bold border transition-all cursor-pointer ${
+            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border transition-all cursor-pointer ${
               playbackRate !== 1.0
-                ? 'bg-green-500/20 text-green-400 border-green-500/40'
-                : 'text-zinc-400 border-zinc-700 hover:text-white hover:border-zinc-500'
+                ? 'bg-violet-500/20 text-violet-400 border-violet-500/40 shadow-sm'
+                : 'text-zinc-400 border-zinc-850 hover:text-white hover:border-zinc-700'
             }`}
             title="Playback Speed"
           >
@@ -268,7 +277,7 @@ const Player: React.FC = () => {
           </button>
 
           {showSpeedMenu && (
-            <div className="absolute right-0 bottom-8 w-24 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-1 z-50 flex flex-col gap-1 text-xs">
+            <div className="absolute right-0 bottom-10 w-24 rounded-2xl glass-panel shadow-2xl p-1.5 z-50 flex flex-col gap-1 text-xs border border-white/[0.05]">
               {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((rate) => (
                 <button
                   key={rate}
@@ -276,8 +285,8 @@ const Player: React.FC = () => {
                     setPlaybackRate(rate);
                     setShowSpeedMenu(false);
                   }}
-                  className={`w-full text-left px-3 py-1 rounded.lg transition-colors ${
-                    playbackRate === rate ? 'bg-green-500/20 text-green-400 font-bold' : 'text-zinc-300 hover:bg-zinc-800'
+                  className={`w-full text-left px-3 py-1.5 rounded-lg transition-colors ${
+                    playbackRate === rate ? 'bg-violet-500/20 text-violet-400 font-bold' : 'text-zinc-300 hover:bg-white/[0.04]'
                   }`}
                 >
                   {rate}x
@@ -300,13 +309,13 @@ const Player: React.FC = () => {
         <button
           onClick={toggleSleepModal}
           className={`hover:text-white transition-colors relative cursor-pointer ${
-            sleepTimerTimeLeft !== null ? 'text-purple-400' : 'text-spotify-lightGray'
+            sleepTimerTimeLeft !== null ? 'text-fuchsia-400' : 'text-spotify-lightGray'
           }`}
           title={sleepTimerTimeLeft !== null ? `Sleep Timer: ${Math.ceil(sleepTimerTimeLeft / 60)}m` : 'Sleep Timer'}
         >
           <Moon className="w-4 h-4" />
           {sleepTimerTimeLeft !== null && (
-            <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-purple-400 animate-ping" />
+            <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-fuchsia-400 animate-ping" />
           )}
         </button>
 
@@ -314,7 +323,7 @@ const Player: React.FC = () => {
         <button
           onClick={toggleEqualizer}
           className={`hover:text-white transition-colors relative cursor-pointer ${
-            showEqualizer ? 'text-spotify-green' : 'text-spotify-lightGray'
+            showEqualizer ? 'text-violet-400' : 'text-spotify-lightGray'
           }`}
           title="Audio Equalizer"
         >
@@ -325,7 +334,7 @@ const Player: React.FC = () => {
         <button
           onClick={toggleLyrics}
           className={`hover:text-white transition-colors relative cursor-pointer ${
-            showLyrics ? 'text-spotify-green' : 'text-spotify-lightGray'
+            showLyrics ? 'text-violet-400' : 'text-spotify-lightGray'
           }`}
           title="Lyrics"
         >
@@ -336,7 +345,7 @@ const Player: React.FC = () => {
         <button
           onClick={() => setShowQueue(!showQueue)}
           className={`hover:text-white transition-colors relative cursor-pointer ${
-            showQueue ? 'text-spotify-green' : 'text-spotify-lightGray'
+            showQueue ? 'text-violet-400' : 'text-spotify-lightGray'
           }`}
           title="Queue"
         >
@@ -346,7 +355,7 @@ const Player: React.FC = () => {
         {/* Volume controls */}
         <button onClick={toggleMute} className="text-spotify-lightGray hover:text-white cursor-pointer" title={isMuted ? "Unmute" : "Mute"}>
           {isMuted || volume === 0 ? (
-            <RiVolumeMuteLine className="w-5 h-5 text-red-500 hover:scale-105 transition-transform" />
+            <RiVolumeMuteLine className="w-5 h-5 text-red-400 hover:scale-105 transition-transform" />
           ) : volume < 0.4 ? (
             <RiVolumeDownLine className="w-5 h-5 hover:scale-105 transition-transform" />
           ) : (
@@ -361,7 +370,7 @@ const Player: React.FC = () => {
           step="0.01"
           value={isMuted ? 0 : volume}
           onChange={(e) => adjustVolume(parseFloat(e.target.value))}
-          className="w-20 sm:w-24 accent-spotify-green h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
+          className="w-20 sm:w-24 accent-violet-500 h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
         />
 
       </div>
