@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Minimize2, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Music2, Eye, EyeOff } from 'lucide-react';
+import { Minimize2, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Music2, Eye, EyeOff, Sparkles } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
 
 /**
@@ -40,7 +40,20 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
   } = usePlayer();
 
   const [showVisualizer, setShowVisualizer] = useState(true);
+  const [visualizerMode, setVisualizerMode] = useState<'pulse' | 'bars' | 'particles'>(() => {
+    const saved = localStorage.getItem('ambient_visualizer_mode');
+    return (saved as 'pulse' | 'bars' | 'particles') || 'pulse';
+  });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const cycleVisualizerMode = () => {
+    setVisualizerMode((prev) => {
+      const modes: ('pulse' | 'bars' | 'particles')[] = ['pulse', 'bars', 'particles'];
+      const nextMode = modes[(modes.indexOf(prev) + 1) % modes.length];
+      localStorage.setItem('ambient_visualizer_mode', nextMode);
+      return nextMode;
+    });
+  };
 
   const formatTime = (seconds: number) => {
     if (isNaN(seconds) || seconds === null) return '0:00';
@@ -61,6 +74,20 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
     const bufferLength = analyserNode ? analyserNode.frequencyBinCount : 64;
     const dataArray = new Uint8Array(bufferLength);
 
+    // Initialize particles for particles mode
+    const numParticles = 60;
+    const particles: { angle: number; speed: number; distance: number; size: number; color: string }[] = [];
+    const baseRadius = 145;
+    for (let i = 0; i < numParticles; i++) {
+      particles.push({
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.003 + Math.random() * 0.007,
+        distance: baseRadius + 12 + Math.random() * 65,
+        size: 1.2 + Math.random() * 2.5,
+        color: i % 3 === 0 ? 'rgba(6, 182, 212, ' : (i % 3 === 1 ? 'rgba(236, 72, 153, ' : 'rgba(139, 92, 246, '),
+      });
+    }
+
     const renderCircularFrame = () => {
       animationId = requestAnimationFrame(renderCircularFrame);
 
@@ -73,7 +100,7 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
       const baseRadius = 145;
 
       // Draw transparent dark layer to create trailing ghost effects
-      ctx.fillStyle = 'rgba(10, 10, 10, 0.2)';
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.25)';
       ctx.fillRect(0, 0, width, height);
 
       let bassIntensity = 0;
@@ -89,71 +116,142 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
         }
         bassIntensity = bassSum / (bassCount * 255);
 
-        // 1. Draw glowing background circle
-        const radGlow = ctx.createRadialGradient(
-          centerX, centerY, baseRadius - 10,
-          centerX, centerY, baseRadius + 70 + bassIntensity * 40
-        );
-        radGlow.addColorStop(0, 'rgba(139, 92, 246, 0.04)');
-        radGlow.addColorStop(0.5, 'rgba(139, 92, 246, 0.12)');
-        radGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = radGlow;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, baseRadius + 110, 0, Math.PI * 2);
-        ctx.fill();
- 
-        // 2. Draw audio-reactive radiating lines / bars
-        const numBars = 100;
-        for (let i = 0; i < numBars; i++) {
-          const dataIndex = Math.floor((i < numBars / 2 ? i : numBars - i) * (bufferLength / (numBars / 2)));
-          const value = dataArray[dataIndex] || 0;
-          const percent = value / 255;
- 
-          const angle = (i * Math.PI * 2) / numBars;
-          const minLength = 3;
-          const maxLength = 50 + bassIntensity * 25;
-          const barLength = minLength + percent * maxLength;
- 
-          // Start point on the circle edge
-          const startX = centerX + Math.cos(angle) * baseRadius;
-          const startY = centerY + Math.sin(angle) * baseRadius;
- 
-          // End point expanding outwards
-          const endX = centerX + Math.cos(angle) * (baseRadius + barLength);
-          const endY = centerY + Math.sin(angle) * (baseRadius + barLength);
- 
-          // Draw visualizer bar
-          ctx.strokeStyle = `rgba(6, 182, 212, ${0.4 + percent * 0.6})`; // Neon Cyan
-          ctx.lineWidth = 2 + percent * 2;
+        if (visualizerMode === 'pulse') {
+          // 1. Draw glowing background circle
+          const radGlow = ctx.createRadialGradient(
+            centerX, centerY, baseRadius - 10,
+            centerX, centerY, baseRadius + 70 + bassIntensity * 40
+          );
+          radGlow.addColorStop(0, 'rgba(139, 92, 246, 0.04)');
+          radGlow.addColorStop(0.5, 'rgba(139, 92, 246, 0.12)');
+          radGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = radGlow;
           ctx.beginPath();
-          ctx.moveTo(startX, startY);
-          ctx.lineTo(endX, endY);
-          ctx.stroke();
-        }
+          ctx.arc(centerX, centerY, baseRadius + 110, 0, Math.PI * 2);
+          ctx.fill();
  
-        // 3. Draw a smooth wave overlay ring
-        ctx.strokeStyle = 'rgba(236, 72, 153, 0.75)'; // Neon Pink
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        for (let i = 0; i <= numBars; i++) {
-          const dataIndex = Math.floor((i < numBars / 2 ? i : numBars - i) * (bufferLength / (numBars / 2)));
-          const value = dataArray[dataIndex] || 0;
-          const percent = value / 255;
-          const angle = (i * Math.PI * 2) / numBars;
-          const radius = baseRadius + percent * (35 + bassIntensity * 15);
+          // 2. Draw audio-reactive radiating lines / bars
+          const numBars = 100;
+          for (let i = 0; i < numBars; i++) {
+            const dataIndex = Math.floor((i < numBars / 2 ? i : numBars - i) * (bufferLength / (numBars / 2)));
+            const value = dataArray[dataIndex] || 0;
+            const percent = value / 255;
  
-          const x = centerX + Math.cos(angle) * radius;
-          const y = centerY + Math.sin(angle) * radius;
+            const angle = (i * Math.PI * 2) / numBars;
+            const minLength = 3;
+            const maxLength = 50 + bassIntensity * 25;
+            const barLength = minLength + percent * maxLength;
  
-          if (i === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
+            // Start point on the circle edge
+            const startX = centerX + Math.cos(angle) * baseRadius;
+            const startY = centerY + Math.sin(angle) * baseRadius;
+ 
+            // End point expanding outwards
+            const endX = centerX + Math.cos(angle) * (baseRadius + barLength);
+            const endY = centerY + Math.sin(angle) * (baseRadius + barLength);
+ 
+            // Draw visualizer bar
+            ctx.strokeStyle = `rgba(6, 182, 212, ${0.4 + percent * 0.6})`; // Neon Cyan
+            ctx.lineWidth = 2 + percent * 2;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
           }
-        }
-        ctx.closePath();
-        ctx.stroke();
  
+          // 3. Draw a smooth wave overlay ring
+          ctx.strokeStyle = 'rgba(236, 72, 153, 0.75)'; // Neon Pink
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          for (let i = 0; i <= numBars; i++) {
+            const dataIndex = Math.floor((i < numBars / 2 ? i : numBars - i) * (bufferLength / (numBars / 2)));
+            const value = dataArray[dataIndex] || 0;
+            const percent = value / 255;
+            const angle = (i * Math.PI * 2) / numBars;
+            const radius = baseRadius + percent * (35 + bassIntensity * 15);
+ 
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+ 
+            if (i === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          ctx.closePath();
+          ctx.stroke();
+ 
+        } else if (visualizerMode === 'bars') {
+          // Radial spectrum bars
+          const numBars = 72;
+          const barWidth = (Math.PI * 2 * baseRadius) / numBars * 0.65;
+          
+          for (let i = 0; i < numBars; i++) {
+            const dataIndex = Math.floor((i / numBars) * (bufferLength * 0.8));
+            const value = dataArray[dataIndex] || 0;
+            const percent = value / 255;
+            const barHeight = percent * 65 + 3;
+
+            const angle = (i * Math.PI * 2) / numBars;
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle);
+
+            // Neon gradient for each bar
+            const gradient = ctx.createLinearGradient(0, baseRadius, 0, baseRadius + barHeight);
+            gradient.addColorStop(0, 'rgba(139, 92, 246, 0.75)'); // Violet
+            gradient.addColorStop(0.5, 'rgba(236, 72, 153, 0.85)'); // Pink
+            gradient.addColorStop(1, 'rgba(6, 182, 212, 1)'); // Cyan
+
+            ctx.fillStyle = gradient;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = 'rgba(236, 72, 153, 0.4)';
+            
+            ctx.beginPath();
+            // Draw a radial bar
+            ctx.rect(-barWidth / 2, baseRadius, barWidth, barHeight);
+            ctx.fill();
+            ctx.restore();
+          }
+        } else if (visualizerMode === 'particles') {
+          // Orbiting dynamic particles
+          particles.forEach((p, idx) => {
+            const freqIdx = Math.floor((idx / numParticles) * bufferLength * 0.8);
+            const freqVal = dataArray[freqIdx] || 0;
+            const freqPercent = freqVal / 255;
+
+            // Update angle (speed increases with music intensity)
+            p.angle += p.speed * (1 + freqPercent * 3.5);
+
+            // Orbit radius expands with music
+            const currentDistance = p.distance + freqPercent * 40;
+
+            const x = centerX + Math.cos(p.angle) * currentDistance;
+            const y = centerY + Math.sin(p.angle) * currentDistance;
+
+            // Draw particle glow
+            ctx.fillStyle = p.color + (0.3 + freqPercent * 0.7) + ')';
+            ctx.shadowBlur = 6 + freqPercent * 8;
+            ctx.shadowColor = p.color.replace('rgba', 'rgb').split(',').slice(0, 3).join(',') + ')';
+            
+            ctx.beginPath();
+            ctx.arc(x, y, p.size * (1 + freqPercent * 1.8), 0, Math.PI * 2);
+            ctx.fill();
+
+            // Trail lines for particles
+            ctx.strokeStyle = p.color + (0.15 * freqPercent) + ')';
+            ctx.lineWidth = p.size * 0.6;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(
+              centerX + Math.cos(p.angle - p.speed * 2) * currentDistance,
+              centerY + Math.sin(p.angle - p.speed * 2) * currentDistance
+            );
+            ctx.stroke();
+          });
+        }
       } else {
         // Idle state: Slowly pulsating rings
         const time = Date.now() * 0.001;
@@ -177,7 +275,7 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [isOpen, showVisualizer, analyserNode, isPlaying]);
+  }, [isOpen, showVisualizer, visualizerMode, analyserNode, isPlaying]);
 
   if (!isOpen || !currentSong) return null;
 
@@ -203,6 +301,16 @@ export const AmbientPlayer: React.FC<AmbientPlayerProps> = ({ isOpen, onClose })
         </div>
         
         <div className="flex items-center gap-3">
+          {showVisualizer && (
+            <button
+              onClick={cycleVisualizerMode}
+              className="p-3 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition-all shadow-lg flex items-center gap-2 text-xs font-semibold"
+              title={`Switch Visualizer Mode (Current: ${visualizerMode})`}
+            >
+              <Sparkles className="w-4 h-4 text-violet-400" />
+              <span className="capitalize">{visualizerMode}</span>
+            </button>
+          )}
           <button
             onClick={() => setShowVisualizer(!showVisualizer)}
             className={`p-3 rounded-full border transition-all shadow-lg ${
