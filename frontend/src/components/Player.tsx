@@ -6,7 +6,8 @@ import { EqualizerModal } from './EqualizerModal';
 import { QueueDrawer } from './QueueDrawer';
 import { AmbientPlayer } from './AmbientPlayer';
 import { SleepTimerModal } from './SleepTimerModal';
-import { Sliders, Maximize2, Moon } from 'lucide-react';
+import { KeyboardShortcutsModal } from './KeyboardShortcutsModal';
+import { Sliders, Maximize2, Moon, Keyboard } from 'lucide-react';
 import { 
   RiPlayCircleFill, 
   RiPauseCircleFill, 
@@ -70,6 +71,7 @@ const Player: React.FC = () => {
   const [showQueue, setShowQueue] = useState(false);
   const [showAmbient, setShowAmbient] = useState(false);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   // Check if current song is liked by user
   useEffect(() => {
@@ -90,6 +92,26 @@ const Player: React.FC = () => {
   const durationRef = useRef(duration);
   durationRef.current = duration;
 
+  // Stable refs for hotkey actions to prevent keydown listener re-binding
+  const playNextRef = useRef(playNext);
+  playNextRef.current = playNext;
+  const playPreviousRef = useRef(playPrevious);
+  playPreviousRef.current = playPrevious;
+  const togglePlayRef = useRef(togglePlay);
+  togglePlayRef.current = togglePlay;
+  const seekRef = useRef(seek);
+  seekRef.current = seek;
+  const toggleMuteRef = useRef(toggleMute);
+  toggleMuteRef.current = toggleMute;
+  const toggleShuffleRef = useRef(toggleShuffle);
+  toggleShuffleRef.current = toggleShuffle;
+  const toggleRepeatRef = useRef(toggleRepeat);
+  toggleRepeatRef.current = toggleRepeat;
+  const toggleEqualizerRef = useRef(toggleEqualizer);
+  toggleEqualizerRef.current = toggleEqualizer;
+  const toggleSleepModalRef = useRef(toggleSleepModal);
+  toggleSleepModalRef.current = toggleSleepModal;
+
   // Global keyboard shortcuts for music playback controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -99,22 +121,67 @@ const Player: React.FC = () => {
         return;
       }
 
+      // Show shortcuts modal when user presses '?'
+      if (e.key === '?') {
+        e.preventDefault();
+        setShowShortcuts((prev) => !prev);
+        return;
+      }
+
       switch (e.code) {
         case 'Space':
           e.preventDefault();
-          togglePlay();
+          togglePlayRef.current();
           break;
         case 'KeyM':
           e.preventDefault();
-          toggleMute();
+          toggleMuteRef.current();
           break;
         case 'ArrowRight':
           e.preventDefault();
-          seek(Math.min(durationRef.current, currentTimeRef.current + 5));
+          seekRef.current(Math.min(durationRef.current, currentTimeRef.current + 5));
           break;
         case 'ArrowLeft':
           e.preventDefault();
-          seek(Math.max(0, currentTimeRef.current - 5));
+          seekRef.current(Math.max(0, currentTimeRef.current - 5));
+          break;
+        case 'KeyN':
+          e.preventDefault();
+          playNextRef.current();
+          break;
+        case 'KeyP':
+          e.preventDefault();
+          playPreviousRef.current();
+          break;
+        case 'KeyS':
+          e.preventDefault();
+          toggleShuffleRef.current();
+          break;
+        case 'KeyR':
+          e.preventDefault();
+          toggleRepeatRef.current();
+          break;
+        case 'KeyL': {
+          e.preventDefault();
+          const likeBtn = document.getElementById('player-like-btn');
+          if (likeBtn) likeBtn.click();
+          break;
+        }
+        case 'KeyQ':
+          e.preventDefault();
+          setShowQueue((prev) => !prev);
+          break;
+        case 'KeyE':
+          e.preventDefault();
+          toggleEqualizerRef.current();
+          break;
+        case 'KeyT':
+          e.preventDefault();
+          toggleSleepModalRef.current();
+          break;
+        case 'KeyH':
+          e.preventDefault();
+          setShowShortcuts((prev) => !prev);
           break;
         default:
           break;
@@ -125,7 +192,7 @@ const Player: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [togglePlay, toggleMute, seek]);
+  }, []);
 
 
   const handleLikeToggle = async () => {
@@ -182,6 +249,7 @@ const Player: React.FC = () => {
         </div>
         {user && (
           <button
+            id="player-like-btn"
             onClick={handleLikeToggle}
             className="text-spotify-lightGray hover:text-white ml-2 transition-colors shrink-0 cursor-pointer"
             title={isLiked ? "Remove from Liked Songs" : "Save to Liked Songs"}
@@ -352,6 +420,17 @@ const Player: React.FC = () => {
           <MdQueueMusic className="w-5 h-5" />
         </button>
 
+        {/* Keyboard Shortcuts button */}
+        <button
+          onClick={() => setShowShortcuts(!showShortcuts)}
+          className={`hover:text-white transition-colors relative cursor-pointer ${
+            showShortcuts ? 'text-violet-400' : 'text-spotify-lightGray'
+          }`}
+          title="Keyboard Shortcuts Guide"
+        >
+          <Keyboard className="w-4 h-4" />
+        </button>
+
         {/* Volume controls */}
         <button onClick={toggleMute} className="text-spotify-lightGray hover:text-white cursor-pointer" title={isMuted ? "Unmute" : "Mute"}>
           {isMuted || volume === 0 ? (
@@ -379,6 +458,7 @@ const Player: React.FC = () => {
       <EqualizerModal />
       <AmbientPlayer isOpen={showAmbient} onClose={() => setShowAmbient(false)} />
       <SleepTimerModal />
+      <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </div>
   );
 };
