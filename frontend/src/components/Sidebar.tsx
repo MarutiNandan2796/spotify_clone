@@ -13,6 +13,7 @@ import {
 } from 'react-icons/ri';
 import { VscLibrary } from 'react-icons/vsc';
 import { BiMusic } from 'react-icons/bi';
+import { MdCloudUpload } from 'react-icons/md';
 
 /**
  * Sidebar Component
@@ -144,6 +145,22 @@ const Sidebar: React.FC = () => {
             <span className="text-xs text-spotify-lightGray">Playlist</span>
           </div>
         </Link>
+
+        {/* Uploads Shortcut */}
+        {user && (
+          <Link
+            to="/upload"
+            className="flex items-center gap-3 p-2.5 mx-1.5 rounded-xl hover:bg-white/[0.04] hover:border hover:border-white/[0.05] transition-all border border-transparent group mt-1"
+          >
+            <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-violet-600 via-indigo-650 to-cyan-500 flex items-center justify-center shadow-lg shrink-0 group-hover:opacity-90 transition-transform duration-300 group-hover:scale-105">
+              <MdCloudUpload className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-sm font-semibold text-white truncate">Your Uploads</span>
+              <span className="text-xs text-spotify-lightGray">Custom Audio</span>
+            </div>
+          </Link>
+        )}
  
         {/* Playlists List Container */}
         <div className="flex-1 overflow-y-auto mt-2 px-1">

@@ -15,6 +15,7 @@ import Album from './pages/Album';
 import Playlist from './pages/Playlist';
 import LikedSongs from './pages/LikedSongs';
 import Profile from './pages/Profile';
+import Upload from './pages/Upload';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
@@ -48,6 +49,7 @@ const App: React.FC = () => {
                 <Route path="playlist/:id" element={<Playlist />} />
                 <Route path="liked-songs" element={<LikedSongs />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="upload" element={<Upload />} />
                 <Route path="admin" element={<AdminDashboard />} />
                 {/* Fallback route redirection */}
                 <Route path="*" element={<Navigate to="/" replace />} />

@@ -21,17 +21,16 @@ router.get('/analytics/summary', getPlaybackAnalytics);
 router.post('/:id/play', incrementPlayCount);
 router.get('/:id', getSongById);
 
-// Admin only routes
+// Song upload and deletion routes (available to any authenticated user/admin)
 router.post(
   '/',
   protect,
-  adminOnly,
   upload.fields([
     { name: 'audio', maxCount: 1 },
     { name: 'coverImage', maxCount: 1 },
   ]),
   createSong
 );
-router.delete('/:id', protect, adminOnly, deleteSong);
+router.delete('/:id', protect, deleteSong);
 
 export default router;

@@ -22,6 +22,8 @@ export interface ISong extends Document {
   plays: number;
   /** Featured status of the song on homepage dashboard */
   isFeatured: boolean;
+  /** Reference ID of the user who uploaded this song (optional) */
+  uploadedBy?: Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -68,6 +70,10 @@ const SongSchema = new Schema<ISong>(
     isFeatured: {
       type: Boolean,
       default: false,
+    },
+    uploadedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
   },
   { timestamps: true }

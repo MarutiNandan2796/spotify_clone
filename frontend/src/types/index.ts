@@ -53,6 +53,7 @@ export interface Song {
   genre: string;
   plays: number;
   isFeatured: boolean;
+  uploadedBy?: string;
   createdAt: string;
 }
 

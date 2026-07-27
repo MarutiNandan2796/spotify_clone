@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { RiArrowLeftSLine, RiArrowRightSLine, RiSearchLine, RiUserLine } from 'react-icons/ri';
 import { FiLogOut } from 'react-icons/fi';
-import { MdOutlineDashboard } from 'react-icons/md';
+import { MdOutlineDashboard, MdCloudUpload } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
@@ -134,6 +134,14 @@ const Navbar: React.FC = () => {
                   >
                     <RiUserLine className="w-4 h-4 text-violet-400" />
                     <span>Profile</span>
+                  </Link>
+                  <Link
+                    to="/upload"
+                    onClick={() => setShowDropdown(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-white/95 hover:bg-white/[0.05] rounded-xl transition-colors"
+                  >
+                    <MdCloudUpload className="w-4 h-4 text-violet-400" />
+                    <span>Upload Song</span>
                   </Link>
                   <hr className="border-white/[0.05] my-1" />
                   <button

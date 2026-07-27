@@ -92,8 +92,23 @@ export const getFeaturedSongs = async (req: Request, res: Response, next: NextFu
 export const createSong = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, artistId, albumId, duration, genre, isFeatured } = req.body;
+    const user = (req as any).user;
 
-    if (!title || !artistId || !duration) {
+    let finalArtistId = artistId;
+    if (!finalArtistId && user) {
+      // Find or create artist matching the user's name
+      let artist = await Artist.findOne({ name: user.name });
+      if (!artist) {
+        artist = await Artist.create({
+          name: user.name,
+          avatar: user.avatar || 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name),
+          bio: `Independent Artist - Uploaded by ${user.name}`,
+        });
+      }
+      finalArtistId = artist._id;
+    }
+
+    if (!title || !finalArtistId || !duration) {
       return res.status(400).json({ success: false, message: 'Title, artist, and duration are required' });
     }
 
@@ -102,7 +117,7 @@ export const createSong = async (req: Request, res: Response, next: NextFunction
       return res.status(400).json({ success: false, message: 'Please upload an audio file' });
     }
 
-    const artist = await Artist.findById(artistId);
+    const artist = await Artist.findById(finalArtistId);
     if (!artist) {
       return res.status(404).json({ success: false, message: 'Artist not found' });
     }
@@ -127,13 +142,14 @@ export const createSong = async (req: Request, res: Response, next: NextFunction
 
     const song = await Song.create({
       title,
-      artist: artistId,
+      artist: finalArtistId,
       album: albumId || undefined,
       audioUrl,
       coverImage,
       duration: parseFloat(duration),
       genre: genre || 'Pop',
-      isFeatured: isFeatured === 'true' || isFeatured === true,
+      isFeatured: user?.role === 'admin' ? (isFeatured === 'true' || isFeatured === true) : false,
+      uploadedBy: user?._id,
     });
 
     // Link song to Album if albumId is provided
@@ -161,9 +177,15 @@ export const deleteSong = async (req: Request, res: Response, next: NextFunction
   try {
     const songId = req.params.id;
     const song = await Song.findById(songId);
+    const user = (req as any).user;
 
     if (!song) {
       return res.status(404).json({ success: false, message: 'Song not found' });
+    }
+
+    // Verify ownership or admin privileges
+    if (user?.role !== 'admin' && song.uploadedBy?.toString() !== user?._id?.toString()) {
+      return res.status(403).json({ success: false, message: 'You are not authorized to delete this song' });
     }
 
     // Remove song from all albums
