@@ -56,9 +56,10 @@ const Login: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5 text-left">
-            <label className="text-xs font-bold text-zinc-300">Email Address</label>
+            <label htmlFor="login-email" className="text-xs font-bold text-zinc-300">Email Address</label>
             <input
               type="email"
+              id="login-email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -68,9 +69,10 @@ const Login: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-1.5 text-left">
-            <label className="text-xs font-bold text-zinc-300">Password</label>
+            <label htmlFor="login-password" className="text-xs font-bold text-zinc-300">Password</label>
             <input
               type="password"
+              id="login-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
