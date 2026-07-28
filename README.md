@@ -38,6 +38,7 @@ A production-quality music streaming web application styled with glassmorphism a
 - **Social Share Modal**: Instant link copy with formatted embed card preview and direct share shortcuts.
 - **Interactive Synchronized Lyrics**: Real-time karaoke-style lyrics display that automatically scrolls and highlights active lines with dynamic background gradients matching the song genre.
 - **Keyboard Shortcuts Navigation**: Use global keyboard controls (`Space` to play/pause, `M` to mute/unmute, `Right/Left arrows` to skip forward/backward 5s) for instant playback adjustment.
+- **Rules & Regulations Consent**: Integrated a Terms & Conditions / Rules checkbox on user registration (`/register`) that blocks signup until checked, coupled with a beautiful glassmorphic animated modal detailing platform rules.
 
 ---
 
