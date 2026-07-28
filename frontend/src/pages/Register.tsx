@@ -12,7 +12,9 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  /** State tracking whether the user has agreed to the platform's rules and regulations */
   const [agreed, setAgreed] = useState(false);
+  /** State controlling the visibility of the rules and regulations popup modal */
   const [showRulesModal, setShowRulesModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
