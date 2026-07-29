@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { RiArrowLeftSLine, RiArrowRightSLine, RiSearchLine, RiUserLine } from 'react-icons/ri';
+import { RiArrowLeftSLine, RiArrowRightSLine, RiSearchLine, RiUserLine, RiGroupLine } from 'react-icons/ri';
 import { FiLogOut } from 'react-icons/fi';
 import { MdOutlineDashboard, MdCloudUpload } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +21,17 @@ const Navbar: React.FC = () => {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [friendActivityActive, setFriendActivityActive] = useState(() => {
+    return localStorage.getItem('showFriendActivity') !== 'false';
+  });
+
+  useEffect(() => {
+    const handleToggle = () => {
+      setFriendActivityActive(localStorage.getItem('showFriendActivity') !== 'false');
+    };
+    window.addEventListener('friendActivityToggle', handleToggle);
+    return () => window.removeEventListener('friendActivityToggle', handleToggle);
+  }, []);
 
   const isSearchPage = location.pathname === '/search';
 
@@ -91,6 +102,22 @@ const Navbar: React.FC = () => {
 
       {/* Auth State Button / Profile Bubble */}
       <div className="flex items-center gap-4">
+        {user && (
+          <button
+            onClick={() => {
+              const current = localStorage.getItem('showFriendActivity') !== 'false';
+              localStorage.setItem('showFriendActivity', String(!current));
+              window.dispatchEvent(new Event('friendActivityToggle'));
+            }}
+            className={`w-9 h-9 rounded-full bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] flex items-center justify-center active:scale-95 transition-all shadow hover:border-violet-500/20 ${
+              friendActivityActive ? 'text-violet-400 bg-white/[0.08] border-violet-500/20' : 'text-zinc-300'
+            }`}
+            title="Toggle Friend Activity"
+          >
+            <RiGroupLine className="w-5 h-5" />
+          </button>
+        )}
+
         {user ? (
           <div className="relative" ref={dropdownRef}>
             <button

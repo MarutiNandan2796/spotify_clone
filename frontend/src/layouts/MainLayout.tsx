@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import Player from '../components/Player';
 import LyricsOverlay from '../components/LyricsOverlay';
+import FriendActivity from '../components/FriendActivity';
 
 const MainLayout: React.FC = () => {
+  const [showFriendActivity, setShowFriendActivity] = useState(() => {
+    return localStorage.getItem('showFriendActivity') !== 'false';
+  });
+
+  useEffect(() => {
+    const handleToggle = () => {
+      setShowFriendActivity(localStorage.getItem('showFriendActivity') !== 'false');
+    };
+    window.addEventListener('friendActivityToggle', handleToggle);
+    return () => window.removeEventListener('friendActivityToggle', handleToggle);
+  }, []);
+
   return (
     <div className="flex flex-col h-screen w-screen bg-spotify-black text-white overflow-hidden select-none relative">
       {/* Glowing background auroras */}
@@ -30,6 +43,13 @@ const MainLayout: React.FC = () => {
             <LyricsOverlay />
           </div>
         </div>
+
+        {/* Right Sidebar - Friend Activity (hidden on mobile, shown on lg+ if active) */}
+        {showFriendActivity && (
+          <div className="hidden lg:flex w-[280px] flex-col shrink-0">
+            <FriendActivity />
+          </div>
+        )}
       </div>
 
       {/* Bottom Floating Audio Player */}

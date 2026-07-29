@@ -16,6 +16,13 @@ export interface IUser extends Document {
   role: 'user' | 'admin';
   /** Array of Playlist reference IDs created or saved by this user */
   playlists: Schema.Types.ObjectId[];
+  /** Array of User reference IDs that this user follows */
+  following: Schema.Types.ObjectId[];
+  /** Current playing track/song activity of the user */
+  currentActivity?: {
+    song: Schema.Types.ObjectId;
+    updatedAt: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,6 +68,22 @@ const UserSchema = new Schema<IUser>(
         ref: 'Playlist',
       },
     ],
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    currentActivity: {
+      song: {
+        type: Schema.Types.ObjectId,
+        ref: 'Song',
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
   },
   { timestamps: true }
 );

@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import History from '../models/History';
 import Song from '../models/Song';
+import User from '../models/User';
 import { AuthRequest } from '../middleware/authMiddleware';
 
 /**
@@ -53,6 +54,14 @@ export const addToHistory = async (req: AuthRequest, res: Response, next: NextFu
     // Increment play count of the song
     song.plays += 1;
     await song.save();
+
+    // Update user's current playing activity
+    await User.findByIdAndUpdate(userId, {
+      currentActivity: {
+        song: songId,
+        updatedAt: new Date(),
+      },
+    });
 
     res.status(201).json({ success: true, message: 'Added to history and play count incremented' });
   } catch (error) {

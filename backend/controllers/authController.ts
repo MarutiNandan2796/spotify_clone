@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
+import Song from '../models/Song';
+import Artist from '../models/Artist';
+import Album from '../models/Album';
 import { generateToken } from '../utils/tokenHelper';
 import { uploadToCloudinary } from '../utils/cloudinaryHelper';
 import { AuthRequest } from '../middleware/authMiddleware';
@@ -157,6 +160,114 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
         role: user.role,
         avatar: user.avatar,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Searches all users by name query (excluding self).
+ * @param req - AuthRequest containing search query
+ * @param res - Express response
+ * @param next - Next function callback
+ */
+export const searchUsers = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const query = req.query.q ? String(req.query.q) : '';
+    if (!query) {
+      return res.status(200).json({ success: true, users: [] });
+    }
+    const users = await User.find({
+      _id: { $ne: req.user.id },
+      name: { $regex: query, $options: 'i' }
+    }).select('_id name avatar following');
+
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Follows or unfollows a target user by ID.
+ * @param req - AuthRequest containing target user ID in params
+ * @param res - Express response
+ * @param next - Next function callback
+ */
+export const toggleFollow = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const targetId = req.params.id;
+    const userId = req.user.id;
+
+    if (targetId === userId) {
+      return res.status(400).json({ success: false, message: 'You cannot follow yourself' });
+    }
+
+    const targetUser = await User.findById(targetId);
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const currentUser = await User.findById(userId);
+    if (!currentUser) {
+      return res.status(404).json({ success: false, message: 'Current user not found' });
+    }
+
+    if (!currentUser.following) {
+      currentUser.following = [];
+    }
+
+    const isFollowing = currentUser.following.includes(targetId as any);
+
+    if (isFollowing) {
+      currentUser.following = currentUser.following.filter(id => id.toString() !== targetId);
+    } else {
+      currentUser.following.push(targetId as any);
+    }
+
+    await currentUser.save();
+
+    res.status(200).json({
+      success: true,
+      isFollowing: !isFollowing,
+      message: isFollowing ? 'Unfollowed user' : 'Followed user',
+      following: currentUser.following
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Retrieves playback activity details of followed friends.
+ * @param req - AuthRequest
+ * @param res - Express response
+ * @param next - Next function callback
+ */
+export const getFriendActivity = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const currentUser = await User.findById(req.user.id);
+    if (!currentUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const friends = await User.find({
+      _id: { $in: currentUser.following }
+    })
+    .select('name avatar currentActivity')
+    .populate({
+      path: 'currentActivity.song',
+      select: 'title coverImage audioUrl duration plays',
+      populate: [
+        { path: 'artist', select: 'name avatar' },
+        { path: 'album', select: 'title coverImage' }
+      ]
+    });
+
+    res.status(200).json({
+      success: true,
+      friends
     });
   } catch (error) {
     next(error);

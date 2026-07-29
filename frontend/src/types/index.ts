@@ -9,6 +9,11 @@ export interface User {
   role: 'user' | 'admin';
   avatar: string;
   playlists: string[];
+  following?: string[];
+  currentActivity?: {
+    song: Song;
+    updatedAt: string;
+  };
   createdAt: string;
 }
 
